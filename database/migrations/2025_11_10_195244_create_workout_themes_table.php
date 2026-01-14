@@ -1,0 +1,17 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('workout_themes', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); // "ENDURANCE DE FORCE"
+            $table->string('type'); // "gym", "cardio", "outside", "home"
+        });
+    }
+    public function down(): void { Schema::dropIfExists('workout_themes'); }
+};
