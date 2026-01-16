@@ -16,10 +16,23 @@ class InterestResource extends Resource
 {
     protected static ?string $model = Interest::class;
     protected static ?string $navigationIcon = 'heroicon-o-heart';
-    protected static ?string $navigationGroup = 'App Configuration';
-    protected static ?string $navigationLabel = 'User Interests';
     protected static ?int $navigationSort = 2;
     protected static ?string $recordTitleAttribute = 'key';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.nav.app_configuration');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.interests');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.interests');
+    }
 
     public static function getNavigationBadge(): ?string
     {

@@ -18,10 +18,23 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
-    protected static ?string $navigationGroup = 'Content Management';
-    protected static ?string $navigationLabel = 'Posts';
     protected static ?int $navigationSort = 2;
     protected static ?string $recordTitleAttribute = 'title_en';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.nav.content_management');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.posts');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.posts');
+    }
 
     public static function getGloballySearchableAttributes(): array
     {

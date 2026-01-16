@@ -17,10 +17,23 @@ class BonusWorkoutRuleResource extends Resource
 {
     protected static ?string $model = BonusWorkoutRule::class;
     protected static ?string $navigationIcon = 'heroicon-o-fire';
-    protected static ?string $navigationGroup = 'Workout Logic';
-    protected static ?string $navigationLabel = 'Bonus Workout Rules';
     protected static ?int $navigationSort = 2;
     protected static ?string $recordTitleAttribute = 'type';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.nav.workout_logic');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.bonus_rules');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.bonus_rules');
+    }
 
     public static function getGloballySearchableAttributes(): array
     {

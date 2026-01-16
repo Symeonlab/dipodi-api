@@ -17,10 +17,23 @@ class PushNotificationResource extends Resource
 {
     protected static ?string $model = PushNotification::class;
     protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
-    protected static ?string $navigationGroup = 'Communication';
-    protected static ?string $navigationLabel = 'Push Notifications';
     protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.nav.communication');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.push_notifications');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.push_notifications');
+    }
 
     public static function getNavigationBadge(): ?string
     {

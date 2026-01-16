@@ -3,30 +3,28 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\RegisterRequest;
+use App\Http\Requests\Api\LoginRequest;
+use App\Http\Responses\ApiResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules;
 
 class AuthController extends Controller
 {
     /**
      * Register a new user via the API.
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
         ]);
 
         // The User model's 'boot' method automatically creates a profile.
@@ -34,35 +32,30 @@ class AuthController extends Controller
 
         $token = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Registration successful',
+        return ApiResponse::created([
             'user' => $user->load('profile'),
             'token' => $token,
-        ], 201);
+        ], 'Registration successful');
     }
 
     /**
      * Log in a user via the API.
      */
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
+        $credentials = $request->validated();
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return ApiResponse::unauthorized('Invalid credentials');
         }
 
         $user = Auth::user();
         $token = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Login successful',
+        return ApiResponse::success([
             'user' => $user->load('profile'),
             'token' => $token,
-        ]);
+        ], 'Login successful');
     }
 
     /**
@@ -71,7 +64,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Logged out successfully']);
+        return ApiResponse::success(null, 'Logged out successfully');
     }
 
     /**
@@ -83,9 +76,9 @@ class AuthController extends Controller
         $status = Password::sendResetLink($request->only('email'));
 
         if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => 'Password reset link sent.']);
+            return ApiResponse::success(null, 'Password reset link sent.');
         }
 
-        return response()->json(['message' => 'Unable to send reset link.'], 400);
+        return ApiResponse::error('Unable to send reset link.');
     }
 }

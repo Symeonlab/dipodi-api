@@ -15,10 +15,23 @@ class OnboardingOptionResource extends Resource
 {
     protected static ?string $model = OnboardingOption::class;
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
-    protected static ?string $navigationGroup = 'App Configuration';
-    protected static ?string $navigationLabel = 'Onboarding Options';
     protected static ?int $navigationSort = 1;
     protected static ?string $recordTitleAttribute = 'key';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.nav.app_configuration');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.onboarding_options');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.onboarding_options');
+    }
 
     public static function getGloballySearchableAttributes(): array
     {
