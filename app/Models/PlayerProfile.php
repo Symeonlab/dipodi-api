@@ -13,7 +13,7 @@ class PlayerProfile extends Model
     // THE FIX: This table also doesn't have timestamps
     public $timestamps = false;
 
-    protected $fillable = ['name', 'group'];
+    protected $fillable = ['name', 'group', 'description'];
 
     /**
      * The workout themes associated with this profile.

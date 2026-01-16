@@ -81,6 +81,38 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * Check if user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is a coach.
+     */
+    public function isCoach(): bool
+    {
+        return $this->role === 'coach';
+    }
+
+    /**
+     * Check if user is a manager.
+     */
+    public function isManager(): bool
+    {
+        return $this->role === 'manager';
+    }
+
+    /**
+     * Check if user has admin-level access (admin, coach, or manager).
+     */
+    public function hasAdminAccess(): bool
+    {
+        return in_array($this->role, ['admin', 'coach', 'manager']);
+    }
+
+    /**
      * Get the reminder settings for the user.
      */
     public function reminderSettings(): HasOne
@@ -102,5 +134,47 @@ class User extends Authenticatable implements FilamentUser
     public function progressLogs(): HasMany
     {
         return $this->hasMany(UserProgress::class);
+    }
+
+    /**
+     * Get the goals for the user.
+     */
+    public function goals(): HasMany
+    {
+        return $this->hasMany(UserGoal::class);
+    }
+
+    /**
+     * Get the active goal for the user.
+     */
+    public function activeGoal(): HasOne
+    {
+        return $this->hasOne(UserGoal::class)->where('status', 'active')->latest();
+    }
+
+    /**
+     * Get the achievements for the user.
+     */
+    public function achievements(): BelongsToMany
+    {
+        return $this->belongsToMany(Achievement::class, 'user_achievements')
+            ->withPivot('earned_at')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get total achievement points.
+     */
+    public function getTotalPointsAttribute(): int
+    {
+        return $this->achievements()->sum('points');
+    }
+
+    /**
+     * Get the workout sessions for the user.
+     */
+    public function workoutSessions(): HasMany
+    {
+        return $this->hasMany(WorkoutSession::class);
     }
 }

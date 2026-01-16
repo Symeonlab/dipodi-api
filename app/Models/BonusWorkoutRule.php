@@ -10,5 +10,5 @@ class BonusWorkoutRule extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $fillable = ['level', 'type', 'sets', 'reps', 'recovery'];
+    protected $fillable = ['level', 'type', 'sets', 'reps', 'recovery', 'duration', 'exercise_count'];
 }

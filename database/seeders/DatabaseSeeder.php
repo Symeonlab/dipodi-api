@@ -12,6 +12,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            // 0. Admin Account (always seed first)
+            AdminSeeder::class,
+
             // 1. Static App Data
             OnboardingOptionSeeder::class,
             NutritionAdviceSeeder::class,
@@ -21,6 +24,7 @@ class DatabaseSeeder extends Seeder
             WorkoutThemeRuleSeeder::class,
             BonusWorkoutRuleSeeder::class,
             InterestSeeder::class,
+            AchievementSeeder::class,
 
             // 2. Test Users (depends on static data)
             UserSeeder::class,

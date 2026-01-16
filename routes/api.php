@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\NutritionPlanController;
@@ -11,14 +13,42 @@ use App\Http\Controllers\Api\UserProfileController;
 use App\Http\Controllers\Api\WorkoutPlanController;
 use App\Http\Controllers\Api\KineController;
 use App\Http\Controllers\Api\SettingsController;
+use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\GoalController;
+use App\Http\Controllers\Api\AchievementController;
+use App\Http\Controllers\Api\PostController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
 
+/*
+|--------------------------------------------------------------------------
+| Rate Limiters
+|--------------------------------------------------------------------------
+*/
+RateLimiter::for('auth', function (Request $request) {
+    return Limit::perMinute(5)->by($request->ip())->response(function () {
+        return response()->json([
+            'success' => false,
+            'message' => __('Too many login attempts. Please try again in a minute.'),
+        ], 429);
+    });
+});
+
+RateLimiter::for('api', function (Request $request) {
+    return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+});
+
+RateLimiter::for('heavy', function (Request $request) {
+    return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
+});
+
 // --- 1. PUBLIC AUTH ROUTES (No login needed) ---
-Route::prefix('auth')->group(function () {
+// Rate limited to 5 requests per minute to prevent brute force attacks
+Route::prefix('auth')->middleware('throttle:auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
@@ -28,29 +58,29 @@ Route::prefix('auth')->group(function () {
         ->whereIn('provider', ['google', 'facebook', 'apple']);
 });
 
-     // --- 2. ONBOARDING DATA (No login needed) ---
-     Route::get('/onboarding-data', [OnboardingController::class, 'getOnboardingData']);
+// --- 2. PUBLIC ROUTES (No login needed) ---
+Route::get('/onboarding-data', [OnboardingController::class, 'getOnboardingData']);
 
-     // --- 3. PROTECTED ROUTES (Requires API Token) ---
-     Route::middleware('auth:sanctum')->group(function () {
+// Posts (Public - for viewing published content)
+Route::prefix('posts')->group(function () {
+    Route::get('/', [PostController::class, 'index']);
+    Route::get('/latest', [PostController::class, 'latest']);
+    Route::get('/{slug}', [PostController::class, 'show']);
+});
+
+// --- 3. PROTECTED ROUTES (Requires API Token) ---
+// Standard rate limit: 60 requests per minute
+Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Auth
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
     // User & Profile
-    Route::get('/user', [UserProfileController::class, 'show']); // Gets the logged-in user
-    Route::put('/user/profile', [UserProfileController::class, 'update']); // Updates user profile (at end of onboarding)
+    Route::get('/user', [UserProfileController::class, 'show']);
+    Route::put('/user/profile', [UserProfileController::class, 'update']);
 
-    // Main App
+    // Main App Dashboard
     Route::get('/dashboard-metrics', [DashboardController::class, 'getMetrics']);
-
-    // Nutrition
-    Route::get('/nutrition-plan', [NutritionPlanController::class, 'generate']);
-
-    // Workouts
-    Route::post('/workout-plan/generate', [WorkoutPlanController::class, 'generate']);
-    Route::get('/workout-plan', [WorkoutPlanController::class, 'getWeeklyPlan']);
-    Route::post('/user-progress', [WorkoutPlanController::class, 'logProgress']);
 
     // --- Kine Tab ---
     Route::get('/kine-data', [KineController::class, 'getKineData']);
@@ -61,6 +91,40 @@ Route::prefix('auth')->group(function () {
     Route::get('/settings/reminders', [SettingsController::class, 'getReminderSettings']);
     Route::put('/settings/reminders', [SettingsController::class, 'updateReminderSettings']);
 
+    // --- Progress ---
     Route::get('/user-progress', [WorkoutPlanController::class, 'getProgress']);
+    Route::post('/user-progress', [WorkoutPlanController::class, 'logProgress']);
+
+    // --- Goals ---
+    Route::prefix('goals')->group(function () {
+        Route::get('/', [GoalController::class, 'index']);
+        Route::get('/active', [GoalController::class, 'active']);
+        Route::post('/', [GoalController::class, 'store']);
+        Route::get('/{goal}', [GoalController::class, 'show']);
+        Route::post('/{goal}/progress', [GoalController::class, 'updateProgress']);
+        Route::put('/{goal}/status', [GoalController::class, 'updateStatus']);
+    });
+
+    // --- Achievements ---
+    Route::prefix('achievements')->group(function () {
+        Route::get('/', [AchievementController::class, 'index']);
+        Route::get('/earned', [AchievementController::class, 'earned']);
+        Route::get('/leaderboard', [AchievementController::class, 'leaderboard']);
+        Route::get('/{achievement}', [AchievementController::class, 'show']);
+    });
+});
+
+// --- 4. HEAVY/EXPENSIVE ROUTES (Lower rate limit: 10 per minute) ---
+// These routes involve complex calculations or database operations
+Route::middleware(['auth:sanctum', 'throttle:heavy'])->group(function () {
+    // Nutrition Plan Generation (expensive calculation)
     Route::get('/nutrition-plan', [NutritionPlanController::class, 'generate']);
+
+    // Workout Plan Generation (expensive calculation)
+    Route::post('/workout-plan/generate', [WorkoutPlanController::class, 'generate']);
+    Route::get('/workout-plan', [WorkoutPlanController::class, 'getWeeklyPlan']);
+
+    // Export Routes (PDF generation is resource intensive)
+    Route::get('/export/workout-plan/pdf', [ExportController::class, 'exportWorkoutPlanPdf']);
+    Route::get('/export/workout-plan/html', [ExportController::class, 'exportWorkoutPlanHtml']);
 });

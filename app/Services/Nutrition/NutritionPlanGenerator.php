@@ -11,11 +11,13 @@ class NutritionPlanGenerator
 {
     private UserProfile $profile;
     private User $user;
+    private string $locale;
 
-    public function __construct(User $user)
+    public function __construct(User $user, ?string $locale = null)
     {
         $this->user = $user;
         $this->profile = $user->profile;
+        $this->locale = $locale ?? app()->getLocale();
     }
 
     public function generatePlan(): array
@@ -75,29 +77,58 @@ class NutritionPlanGenerator
     {
         $meals = [];
 
+        // Localized meal names
+        $mealNames = $this->getMealNames();
+
         $meals[] = [
-            'name' => 'Petit déjeuner',
+            'name' => $mealNames['breakfast'],
             'items' => $this->generateBreakfastItems(),
         ];
 
         $meals[] = [
-            'name' => 'Déjeuner',
-            'items' => $this->generateLunchOrDinnerItems('Déjeuner'),
+            'name' => $mealNames['lunch'],
+            'items' => $this->generateLunchOrDinnerItems('lunch'),
         ];
 
         $meals[] = [
-            'name' => 'Dîner',
-            'items' => $this->generateLunchOrDinnerItems('Dîner'),
+            'name' => $mealNames['dinner'],
+            'items' => $this->generateLunchOrDinnerItems('dinner'),
         ];
 
         if (strtoupper($this->profile->goal) === "MASSE MUSCULAIRE") {
             $meals[] = [
-                'name' => 'Collation',
+                'name' => $mealNames['snack'],
                 'items' => ["50g d'amandes", "1 pomme"], // Example
             ];
         }
 
         return $meals;
+    }
+
+    private function getMealNames(): array
+    {
+        $names = [
+            'en' => [
+                'breakfast' => 'Breakfast',
+                'lunch' => 'Lunch',
+                'dinner' => 'Dinner',
+                'snack' => 'Snack',
+            ],
+            'fr' => [
+                'breakfast' => 'Petit déjeuner',
+                'lunch' => 'Déjeuner',
+                'dinner' => 'Dîner',
+                'snack' => 'Collation',
+            ],
+            'ar' => [
+                'breakfast' => 'فطور',
+                'lunch' => 'غداء',
+                'dinner' => 'عشاء',
+                'snack' => 'وجبة خفيفة',
+            ],
+        ];
+
+        return $names[$this->locale] ?? $names['fr'];
     }
 
     private function generateBreakfastItems(): array
@@ -111,7 +142,7 @@ class NutritionPlanGenerator
         return $this->profile->breakfast_preferences;
     }
 
-    private function generateLunchOrDinnerItems(string $mealName): array
+    private function generateLunchOrDinnerItems(string $mealType): array
     {
         // Dynamic generation from your DB
         $main = FoodItem::where('category', 'platPrincipal');
@@ -125,21 +156,30 @@ class NutritionPlanGenerator
                 ->orWhereJsonContains('tags', 'poisson');
         }
 
-        // Rule: "PAS DE FRUITS LE SOIR"
-        if ($mealName === 'Dîner') {
+        // Rule: "PAS DE FRUITS LE SOIR" (No fruits in the evening)
+        if ($mealType === 'dinner') {
             $dessert->whereJsonDoesntContain('tags', 'fruit');
         }
 
+        // Get localized food names
+        $nameField = $this->locale === 'ar' ? 'name_ar' : ($this->locale === 'en' ? 'name_en' : 'name');
+
+        $mainItem = $main->inRandomOrder()->first();
+        $sideItem = $side->inRandomOrder()->first();
+        $vegItem = FoodItem::whereJsonContains('tags', 'legume')->inRandomOrder()->first();
+        $dessertItem = $dessert->inRandomOrder()->first();
+
         return [
-            $main->inRandomOrder()->first()->name ?? 'Filet de poulet',
-            $side->inRandomOrder()->first()->name ?? 'Riz',
-            FoodItem::whereJsonContains('tags', 'legume')->inRandomOrder()->first()->name ?? 'Haricots verts',
-            $dessert->inRandomOrder()->first()->name ?? 'Yaourt nature',
+            $mainItem->{$nameField} ?? $mainItem->name ?? 'Filet de poulet',
+            $sideItem->{$nameField} ?? $sideItem->name ?? 'Riz',
+            $vegItem->{$nameField} ?? $vegItem->name ?? 'Haricots verts',
+            $dessertItem->{$nameField} ?? $dessertItem->name ?? 'Yaourt nature',
         ];
     }
 
     /**
      * This function is now fully dynamic and queries the database.
+     * Returns localized advice based on user's medical/family history.
      */
     private function getNutritionalAdvice(): array
     {
@@ -153,12 +193,33 @@ class NutritionPlanGenerator
         // Query the DB for all relevant conditions at once
         $dbAdvice = NutritionAdvice::whereIn('condition_name', $conditions)->get();
 
+        // Determine locale-specific field names
+        $propheticField = "prophetic_advice_{$this->locale}";
+        $avoidField = "foods_to_avoid_{$this->locale}";
+        $eatField = "foods_to_eat_{$this->locale}";
+
         foreach ($dbAdvice as $advice) {
+            // Get prophetic advice with fallback chain: requested locale -> fr -> en
+            $propheticAdvice = $advice->{$propheticField}
+                ?? $advice->prophetic_advice_fr
+                ?? $advice->prophetic_advice_en
+                ?? null;
+
+            // Get foods to avoid with locale fallback
+            $foodsToAvoid = $advice->{$avoidField}
+                ?? $advice->foods_to_avoid
+                ?? [];
+
+            // Get foods to eat with locale fallback
+            $foodsToEat = $advice->{$eatField}
+                ?? $advice->foods_to_eat
+                ?? [];
+
             $adviceList[] = [
                 'condition' => $advice->condition_name,
-                'avoid' => $advice->foods_to_avoid, // Already cast to array
-                'eat' => $advice->foods_to_eat,     // Already cast to array
-                'prophetic_advice' => $advice->prophetic_advice_fr // Add en/ar logic later
+                'avoid' => $foodsToAvoid,
+                'eat' => $foodsToEat,
+                'prophetic_advice' => $propheticAdvice,
             ];
         }
         return $adviceList;
