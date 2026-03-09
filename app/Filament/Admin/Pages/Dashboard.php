@@ -16,6 +16,7 @@ use App\Filament\Admin\Widgets\OnboardingStatsWidget;
 use App\Filament\Admin\Widgets\GoalProgressWidget;
 use App\Filament\Admin\Widgets\AchievementsWidget;
 use App\Filament\Admin\Widgets\ApiStatsWidget;
+use App\Filament\Admin\Widgets\FeedbackOverviewWidget;
 
 class Dashboard extends BaseDashboard
 {
@@ -34,6 +35,7 @@ class Dashboard extends BaseDashboard
             ContentStatsWidget::class,
             WorkoutNutritionWidget::class,
             OnboardingStatsWidget::class,
+            FeedbackOverviewWidget::class,
             ExerciseCategoryChart::class,
             FoodCategoryChart::class,
             NewUsersChart::class,

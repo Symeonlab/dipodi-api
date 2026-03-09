@@ -22,6 +22,11 @@ class WorkoutSession extends Model
         'theme',
         'warmup',
         'finisher',
+        'metadata',
+    ];
+
+    protected $casts = [
+        'metadata' => 'array',
     ];
 
     /**

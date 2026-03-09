@@ -96,6 +96,34 @@ class FoodItemResource extends Resource
                     ])
                     ->columns(2),
 
+                Forms\Components\Section::make('Sport Nutrition')
+                    ->description('H+1 (Energy) and H+24 (Recovery) timing values')
+                    ->icon('heroicon-o-bolt')
+                    ->schema([
+                        Forms\Components\TextInput::make('h_plus_1_energy')
+                            ->label('H+1 Energy')
+                            ->numeric()
+                            ->step(0.1)
+                            ->helperText('Energy value at H+1 after intake'),
+                        Forms\Components\TextInput::make('h_plus_24_recovery')
+                            ->label('H+24 Recovery')
+                            ->numeric()
+                            ->step(0.1)
+                            ->helperText('Recovery value at H+24 after intake'),
+                        Forms\Components\Select::make('meal_timing')
+                            ->label('Meal Timing')
+                            ->options([
+                                'pre_workout' => 'Pre-Workout',
+                                'post_workout' => 'Post-Workout',
+                                'recovery' => 'Recovery',
+                                'any' => 'Any Time',
+                            ])
+                            ->nullable()
+                            ->native(false),
+                    ])
+                    ->columns(3)
+                    ->collapsible(),
+
                 Forms\Components\Section::make('Food Properties')
                     ->description('Tags help categorize and filter foods')
                     ->icon('heroicon-o-tag')

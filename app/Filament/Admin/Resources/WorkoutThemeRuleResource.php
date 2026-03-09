@@ -123,6 +123,85 @@ class WorkoutThemeRuleResource extends Resource
                             ->native(false),
                     ])
                     ->columns(2),
+
+                Forms\Components\Section::make('Intensity & Performance')
+                    ->description('Zone, RPE, METs, and load parameters')
+                    ->icon('heroicon-o-signal')
+                    ->schema([
+                        Forms\Components\TextInput::make('mets')
+                            ->label('METs')
+                            ->numeric()
+                            ->step(0.1),
+                        Forms\Components\TextInput::make('duration')
+                            ->placeholder('e.g., 90-120 min'),
+                        Forms\Components\TextInput::make('charges')
+                            ->placeholder('e.g., 85-100%'),
+                        Forms\Components\TextInput::make('speed_intensity')
+                            ->label('Speed / Intensity')
+                            ->placeholder('e.g., Lente-contrôlée'),
+                        Forms\Components\TextInput::make('rpe')
+                            ->label('RPE (1-10)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(10),
+                        Forms\Components\TextInput::make('load_ua')
+                            ->label('Load (u.a.)')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('impact')
+                            ->label('Impact (1-5)')
+                            ->numeric()
+                            ->minValue(1)
+                            ->maxValue(5),
+                    ])
+                    ->columns(4)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Recovery & Supercompensation')
+                    ->description('Freshness windows and recovery data')
+                    ->icon('heroicon-o-arrow-trending-up')
+                    ->schema([
+                        Forms\Components\TextInput::make('sleep_requirement')
+                            ->placeholder('e.g., 9h'),
+                        Forms\Components\TextInput::make('hydration')
+                            ->placeholder('e.g., 1.00L'),
+                        Forms\Components\TextInput::make('freshness_24h')
+                            ->label('Freshness H+24')
+                            ->numeric()
+                            ->step(0.01),
+                        Forms\Components\TextInput::make('freshness_48h')
+                            ->label('Freshness H+48')
+                            ->numeric()
+                            ->step(0.01),
+                        Forms\Components\TextInput::make('freshness_72h')
+                            ->label('Freshness H+72')
+                            ->numeric()
+                            ->step(0.01),
+                        Forms\Components\TextInput::make('supercomp_window')
+                            ->label('Supercomp Window')
+                            ->placeholder('e.g., 48h'),
+                        Forms\Components\TextInput::make('elastic_recoil')
+                            ->placeholder('e.g., Diminue'),
+                        Forms\Components\TextInput::make('cfa')
+                            ->label('CFA')
+                            ->placeholder('e.g., Moyen'),
+                    ])
+                    ->columns(4)
+                    ->collapsible(),
+
+                Forms\Components\Section::make('Alerts & Predictions')
+                    ->icon('heroicon-o-exclamation-triangle')
+                    ->schema([
+                        Forms\Components\TextInput::make('daily_alert_threshold')
+                            ->placeholder('e.g., 600 u.a.'),
+                        Forms\Components\TextInput::make('weekly_alert_threshold')
+                            ->placeholder('e.g., 1200 u.a.'),
+                        Forms\Components\TextInput::make('gain_prediction')
+                            ->placeholder('e.g., Explosivité & Réaction'),
+                        Forms\Components\TextInput::make('injury_risk')
+                            ->placeholder('e.g., Très Élevé'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
             ]);
     }
 

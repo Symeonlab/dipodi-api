@@ -17,6 +17,12 @@ use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\GoalController;
 use App\Http\Controllers\Api\AchievementController;
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\HealthAssessmentController;
+use App\Http\Controllers\Api\WorkoutFeedbackController;
+use App\Http\Controllers\Api\SleepController;
+use App\Http\Controllers\Api\PropheticMedicineController;
+use App\Http\Controllers\Api\IntensityZoneController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,14 +64,16 @@ Route::prefix('auth')->middleware('throttle:auth')->group(function () {
         ->whereIn('provider', ['google', 'facebook', 'apple']);
 });
 
-// --- 2. PUBLIC ROUTES (No login needed) ---
-Route::get('/onboarding-data', [OnboardingController::class, 'getOnboardingData']);
+// --- 2. PUBLIC ROUTES (No login needed, still rate-limited) ---
+Route::middleware('throttle:api')->group(function () {
+    Route::get('/onboarding-data', [OnboardingController::class, 'getOnboardingData']);
 
-// Posts (Public - for viewing published content)
-Route::prefix('posts')->group(function () {
-    Route::get('/', [PostController::class, 'index']);
-    Route::get('/latest', [PostController::class, 'latest']);
-    Route::get('/{slug}', [PostController::class, 'show']);
+    // Posts (Public - for viewing published content)
+    Route::prefix('posts')->group(function () {
+        Route::get('/', [PostController::class, 'index']);
+        Route::get('/latest', [PostController::class, 'latest']);
+        Route::get('/{slug}', [PostController::class, 'show']);
+    });
 });
 
 // --- 3. PROTECTED ROUTES (Requires API Token) ---
@@ -111,6 +119,49 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
         Route::get('/earned', [AchievementController::class, 'earned']);
         Route::get('/leaderboard', [AchievementController::class, 'leaderboard']);
         Route::get('/{achievement}', [AchievementController::class, 'show']);
+    });
+
+    // --- Feedback ---
+    Route::prefix('feedback')->group(function () {
+        Route::get('/categories', [FeedbackController::class, 'categories']);
+        Route::get('/questions/{categoryKey}', [FeedbackController::class, 'questions']);
+        Route::post('/submit', [FeedbackController::class, 'submit']);
+        Route::get('/history', [FeedbackController::class, 'history']);
+        Route::get('/stats', [FeedbackController::class, 'stats']);
+        Route::get('/sessions/{sessionId}', [FeedbackController::class, 'session']);
+    });
+
+    // --- Workout Feedback ---
+    Route::prefix('workout-feedback')->group(function () {
+        Route::get('/questions', [WorkoutFeedbackController::class, 'questions']);
+        Route::post('/', [WorkoutFeedbackController::class, 'submit']);
+        Route::get('/history', [WorkoutFeedbackController::class, 'history']);
+        Route::get('/recommendation/{theme}', [WorkoutFeedbackController::class, 'recommendation']);
+    });
+
+    // --- Sleep & Recovery ---
+    Route::get('/sleep/protocols', [SleepController::class, 'getProtocols']);
+    Route::get('/sleep/chronotypes', [SleepController::class, 'getChronotypes']);
+    Route::get('/sleep/calculate', [SleepController::class, 'calculateBedtime']);
+
+    // --- Prophetic Medicine ---
+    Route::get('/prophetic-medicine', [PropheticMedicineController::class, 'index']);
+    Route::get('/prophetic-medicine/{condition}', [PropheticMedicineController::class, 'show'])
+        ->where('condition', '[a-z_]+');
+
+    // --- Intensity Zones ---
+    Route::get('/intensity-zones', [IntensityZoneController::class, 'index']);
+
+    // --- Health Assessment ---
+    Route::prefix('health-assessment')->group(function () {
+        Route::get('/categories', [HealthAssessmentController::class, 'categories']);
+        Route::get('/questions/{categoryKey}', [HealthAssessmentController::class, 'questions']);
+        Route::get('/full', [HealthAssessmentController::class, 'fullAssessment']);
+        Route::post('/start', [HealthAssessmentController::class, 'startSession']);
+        Route::post('/submit', [HealthAssessmentController::class, 'submit']);
+        Route::get('/history', [HealthAssessmentController::class, 'history']);
+        Route::get('/insights', [HealthAssessmentController::class, 'insights']);
+        Route::get('/sessions/{sessionId}', [HealthAssessmentController::class, 'session']);
     });
 });
 

@@ -26,19 +26,19 @@ class NutritionPlanGenerator
 
         return [
             'daily_calorie_intake' => round($calories),
-            'macros' => [ // Example macros, you can customize this
+            'macros' => [
                 'protein_grams' => round(($calories * 0.3) / 4), // 30% Protein
                 'carb_grams' => round(($calories * 0.4) / 4),    // 40% Carbs
                 'fat_grams' => round(($calories * 0.3) / 9),     // 30% Fat
             ],
-            'daily_meals' => $this->generateMeals(),
-            'advice' => $this->getNutritionalAdvice(), // This is now dynamic
+            'daily_meals' => $this->generateMeals($calories),
+            'advice' => $this->getNutritionalAdvice(),
         ];
     }
 
     private function calculateDailyCalorieIntake(): float
     {
-        // Formula from PDF
+        // Harris-Benedict formula from PDF
         $mb = 0;
         if (strtoupper($this->profile->gender) === 'HOMME') {
             $mb = 66 + (13.7 * $this->profile->weight) + (5.0 * $this->profile->height) - (6.5 * $this->profile->age);
@@ -73,32 +73,53 @@ class NutritionPlanGenerator
         return $totalCalories;
     }
 
-    private function generateMeals(): array
+    private function generateMeals(float $dailyCalories): array
     {
         $meals = [];
-
-        // Localized meal names
         $mealNames = $this->getMealNames();
+        $isMuscleGoal = strtoupper($this->profile->goal) === "MASSE MUSCULAIRE";
+
+        // Calorie distribution: breakfast 25%, lunch 35%, dinner 30%, snack 10%
+        $breakfastCal = round($dailyCalories * 0.25);
+        $lunchCal = round($dailyCalories * ($isMuscleGoal ? 0.30 : 0.35));
+        $dinnerCal = round($dailyCalories * 0.30);
+        $snackCal = $isMuscleGoal ? round($dailyCalories * 0.15) : 0;
 
         $meals[] = [
             'name' => $mealNames['breakfast'],
+            'meal_type' => 'breakfast',
             'items' => $this->generateBreakfastItems(),
+            'estimated_calories' => $breakfastCal,
         ];
 
+        $lunchItems = $this->generateLunchOrDinnerItems('lunch');
         $meals[] = [
             'name' => $mealNames['lunch'],
-            'items' => $this->generateLunchOrDinnerItems('lunch'),
+            'meal_type' => 'lunch',
+            'items' => array_column($lunchItems, 'name'),
+            'food_details' => $lunchItems,
+            'estimated_calories' => $lunchCal,
         ];
 
+        $dinnerItems = $this->generateLunchOrDinnerItems('dinner');
         $meals[] = [
             'name' => $mealNames['dinner'],
-            'items' => $this->generateLunchOrDinnerItems('dinner'),
+            'meal_type' => 'dinner',
+            'items' => array_column($dinnerItems, 'name'),
+            'food_details' => $dinnerItems,
+            'estimated_calories' => $dinnerCal,
         ];
 
-        if (strtoupper($this->profile->goal) === "MASSE MUSCULAIRE") {
+        if ($isMuscleGoal) {
             $meals[] = [
                 'name' => $mealNames['snack'],
-                'items' => ["50g d'amandes", "1 pomme"], // Example
+                'meal_type' => 'snack',
+                'items' => ["50g d'amandes", "1 pomme"],
+                'food_details' => [
+                    ['name' => "50g d'amandes", 'kcal_per_100g' => 634, 'food_type' => 'fruit_sec'],
+                    ['name' => '1 pomme', 'kcal_per_100g' => 53, 'food_type' => 'fruit'],
+                ],
+                'estimated_calories' => $snackCal,
             ];
         }
 
@@ -134,17 +155,17 @@ class NutritionPlanGenerator
     private function generateBreakfastItems(): array
     {
         if (empty($this->profile->breakfast_preferences)) {
-            // Default example from PDF
             return ["150g fromage blanc", "100g flocon d'avoine", "1 banane"];
         }
 
-        // This is a simple pass-through; you can expand this
         return $this->profile->breakfast_preferences;
     }
 
+    /**
+     * Returns an array of food detail objects with name, kcal_per_100g, and food_type.
+     */
     private function generateLunchOrDinnerItems(string $mealType): array
     {
-        // Dynamic generation from your DB
         $main = FoodItem::where('category', 'platPrincipal');
         $side = FoodItem::where('category', 'accompagnement');
         $dessert = FoodItem::where('category', 'dessert');
@@ -152,8 +173,10 @@ class NutritionPlanGenerator
         if ($this->profile->is_vegetarian) {
             $main->whereJsonContains('tags', 'vegetarien');
         } else {
-            $main->whereJsonContains('tags', 'viande')
-                ->orWhereJsonContains('tags', 'poisson');
+            $main->where(function ($query) {
+                $query->whereJsonContains('tags', 'viande')
+                    ->orWhereJsonContains('tags', 'poisson');
+            });
         }
 
         // Rule: "PAS DE FRUITS LE SOIR" (No fruits in the evening)
@@ -161,24 +184,59 @@ class NutritionPlanGenerator
             $dessert->whereJsonDoesntContain('tags', 'fruit');
         }
 
-        // Get localized food names
-        $nameField = $this->locale === 'ar' ? 'name_ar' : ($this->locale === 'en' ? 'name_en' : 'name');
-
         $mainItem = $main->inRandomOrder()->first();
         $sideItem = $side->inRandomOrder()->first();
         $vegItem = FoodItem::whereJsonContains('tags', 'legume')->inRandomOrder()->first();
         $dessertItem = $dessert->inRandomOrder()->first();
 
         return [
-            $mainItem->{$nameField} ?? $mainItem->name ?? 'Filet de poulet',
-            $sideItem->{$nameField} ?? $sideItem->name ?? 'Riz',
-            $vegItem->{$nameField} ?? $vegItem->name ?? 'Haricots verts',
-            $dessertItem->{$nameField} ?? $dessertItem->name ?? 'Yaourt nature',
+            $this->formatFoodDetail($mainItem, 'Filet de poulet', 'plat_principal'),
+            $this->formatFoodDetail($sideItem, 'Riz', 'accompagnement'),
+            $this->formatFoodDetail($vegItem, 'Haricots verts', 'legume'),
+            $this->formatFoodDetail($dessertItem, 'Yaourt nature', 'dessert'),
         ];
     }
 
     /**
-     * This function is now fully dynamic and queries the database.
+     * Extracts calorie info and food type from a FoodItem's tags.
+     */
+    private function formatFoodDetail(?FoodItem $item, string $fallbackName, string $fallbackType): array
+    {
+        if (!$item) {
+            return [
+                'name' => $fallbackName,
+                'kcal_per_100g' => null,
+                'food_type' => $fallbackType,
+            ];
+        }
+
+        $kcal = null;
+        $foodType = $fallbackType;
+        $tags = $item->tags ?? [];
+
+        // Extract kcal from tags (format: "287.0kcal")
+        foreach ($tags as $tag) {
+            if (str_ends_with($tag, 'kcal')) {
+                $kcal = (float) rtrim($tag, 'kcal');
+            }
+        }
+
+        // Detect food type from tags
+        foreach ($tags as $tag) {
+            if (in_array($tag, ['viande', 'poisson', 'legume', 'feculent', 'fruit', 'laitage', 'oeuf', 'vegetarien'])) {
+                $foodType = $tag;
+                break;
+            }
+        }
+
+        return [
+            'name' => $item->name,
+            'kcal_per_100g' => $kcal,
+            'food_type' => $foodType,
+        ];
+    }
+
+    /**
      * Returns localized advice based on user's medical/family history.
      */
     private function getNutritionalAdvice(): array
@@ -190,35 +248,20 @@ class NutritionPlanGenerator
             return [];
         }
 
-        // Query the DB for all relevant conditions at once
         $dbAdvice = NutritionAdvice::whereIn('condition_name', $conditions)->get();
 
-        // Determine locale-specific field names
         $propheticField = "prophetic_advice_{$this->locale}";
-        $avoidField = "foods_to_avoid_{$this->locale}";
-        $eatField = "foods_to_eat_{$this->locale}";
 
         foreach ($dbAdvice as $advice) {
-            // Get prophetic advice with fallback chain: requested locale -> fr -> en
             $propheticAdvice = $advice->{$propheticField}
                 ?? $advice->prophetic_advice_fr
                 ?? $advice->prophetic_advice_en
                 ?? null;
 
-            // Get foods to avoid with locale fallback
-            $foodsToAvoid = $advice->{$avoidField}
-                ?? $advice->foods_to_avoid
-                ?? [];
-
-            // Get foods to eat with locale fallback
-            $foodsToEat = $advice->{$eatField}
-                ?? $advice->foods_to_eat
-                ?? [];
-
             $adviceList[] = [
                 'condition' => $advice->condition_name,
-                'avoid' => $foodsToAvoid,
-                'eat' => $foodsToEat,
+                'avoid' => $advice->foods_to_avoid ?? [],
+                'eat' => $advice->foods_to_eat ?? [],
                 'prophetic_advice' => $propheticAdvice,
             ];
         }

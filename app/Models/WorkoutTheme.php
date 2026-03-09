@@ -24,7 +24,10 @@ class WorkoutTheme extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'type'];
+    protected $fillable = [
+        'name', 'type', 'discipline', 'zone_color',
+        'quality_method', 'display_name', 'sort_order',
+    ];
 
     /**
      * Get the rules associated with this workout theme.

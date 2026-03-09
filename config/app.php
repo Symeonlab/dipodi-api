@@ -61,6 +61,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Dipodi App Key Hash
+    |--------------------------------------------------------------------------
+    |
+    | SHA-256 hash of the app key that iOS clients must send in the
+    | X-App-Key header. This ensures only authorised clients can call
+    | the API. Generate with: echo -n "your-secret-key" | sha256sum
+    |
+    */
+
+    'dipodi_app_key_hash' => env('DIPODI_APP_KEY_HASH'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

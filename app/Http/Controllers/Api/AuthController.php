@@ -29,8 +29,10 @@ class AuthController extends Controller
 
         // The User model's 'boot' method automatically creates a profile.
         // 'is_onboarding_complete' is 'false' by default.
+        // Refresh to get database defaults like 'role'
+        $user->refresh();
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $token = $user->createToken('dipodi-mobile')->plainTextToken;
 
         return ApiResponse::created([
             'user' => $user->load('profile'),
@@ -50,7 +52,11 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
-        $token = $user->createToken('api-token')->plainTextToken;
+
+        // Revoke all previous tokens for this device to prevent token accumulation
+        $user->tokens()->where('name', 'dipodi-mobile')->delete();
+
+        $token = $user->createToken('dipodi-mobile')->plainTextToken;
 
         return ApiResponse::success([
             'user' => $user->load('profile'),

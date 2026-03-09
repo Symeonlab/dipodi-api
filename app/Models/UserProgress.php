@@ -22,12 +22,20 @@ class UserProgress extends Model
         'user_id',
         'date',
         'weight',
-        'waist', // <-- Correct
-        'chest', // <-- Correct
-        'hips',  // <-- Correct
+        'waist',
+        'chest',
+        'hips',
         'mood',
         'notes',
         'workout_completed',
+    ];
+
+    protected $casts = [
+        'date' => 'date',
+        'weight' => 'float',
+        'waist' => 'float',
+        'chest' => 'float',
+        'hips' => 'float',
     ];
 
     /**

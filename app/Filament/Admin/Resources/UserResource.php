@@ -428,18 +428,94 @@ class UserResource extends Resource
                     ])
                     ->columns(4)
                     ->collapsible(),
+
+                Infolists\Components\Section::make('Feedback Summary')
+                    ->icon('heroicon-o-clipboard-document-check')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('feedback_total_sessions')
+                            ->label('Total Sessions')
+                            ->state(fn ($record) => $record->feedbackSessions()->count())
+                            ->badge()
+                            ->color('info'),
+                        Infolists\Components\TextEntry::make('feedback_completed_sessions')
+                            ->label('Completed')
+                            ->state(fn ($record) => $record->feedbackSessions()->where('status', 'completed')->count())
+                            ->badge()
+                            ->color('success'),
+                        Infolists\Components\TextEntry::make('feedback_average_score')
+                            ->label('Average Score')
+                            ->state(function ($record) {
+                                $avg = $record->feedbackSessions()
+                                    ->where('status', 'completed')
+                                    ->whereNotNull('average_score')
+                                    ->avg('average_score');
+                                return $avg ? number_format($avg, 1) . '/10' : 'N/A';
+                            })
+                            ->badge()
+                            ->color(fn ($state) => match (true) {
+                                str_contains($state, 'N/A') => 'gray',
+                                (float)$state >= 7 => 'success',
+                                (float)$state >= 5 => 'warning',
+                                default => 'danger',
+                            }),
+                        Infolists\Components\TextEntry::make('feedback_total_answers')
+                            ->label('Total Answers')
+                            ->state(fn ($record) => $record->feedbackAnswers()->count())
+                            ->badge()
+                            ->color('purple'),
+                    ])
+                    ->columns(4)
+                    ->collapsible(),
+
+                Infolists\Components\Section::make('Health Assessment Summary')
+                    ->icon('heroicon-o-heart')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('health_total_sessions')
+                            ->label('Total Assessments')
+                            ->state(fn ($record) => $record->healthAssessmentSessions()->count())
+                            ->badge()
+                            ->color('info'),
+                        Infolists\Components\TextEntry::make('health_completed_sessions')
+                            ->label('Completed')
+                            ->state(fn ($record) => $record->healthAssessmentSessions()->where('status', 'completed')->count())
+                            ->badge()
+                            ->color('success'),
+                        Infolists\Components\TextEntry::make('health_concerns_count')
+                            ->label('Total Concerns')
+                            ->state(function ($record) {
+                                return $record->healthAssessmentAnswers()
+                                    ->whereIn('answer_value', ['oui', 'yes', '1', 'true'])
+                                    ->count();
+                            })
+                            ->badge()
+                            ->color(fn ($state) => $state > 20 ? 'danger' : ($state > 10 ? 'warning' : 'success')),
+                        Infolists\Components\TextEntry::make('health_critical_concerns')
+                            ->label('Critical Concerns')
+                            ->state(function ($record) {
+                                return $record->healthAssessmentAnswers()
+                                    ->whereIn('answer_value', ['oui', 'yes', '1', 'true'])
+                                    ->whereHas('question', fn ($q) => $q->where('is_critical', true))
+                                    ->count();
+                            })
+                            ->badge()
+                            ->color(fn ($state) => $state > 0 ? 'danger' : 'success'),
+                    ])
+                    ->columns(4)
+                    ->collapsible(),
             ]);
     }
 
     /**
-     * This function loads the "Reminder Settings" and "Favorite Exercises"
-     * sections at the bottom of the "Edit User" page.
+     * This function loads the "Reminder Settings", "Favorite Exercises",
+     * "Feedback Sessions", and "Health Assessment Sessions" sections at the bottom of the "Edit User" page.
      */
     public static function getRelations(): array
     {
         return [
             RelationManagers\ReminderSettingsRelationManager::class,
             RelationManagers\FavoriteExercisesRelationManager::class,
+            RelationManagers\FeedbackSessionsRelationManager::class,
+            RelationManagers\HealthAssessmentSessionsRelationManager::class,
         ];
     }
 

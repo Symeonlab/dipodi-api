@@ -28,11 +28,12 @@ class UserProfileController extends Controller
         $validatedData = $request->validated();
 
         // Update the main User model (name/email)
-        if ($request->has('name')) {
-            $user->name = $validatedData['name'];
+        // Note: Use $request->input() instead of $validatedData since these may not be in validation rules
+        if ($request->filled('name')) {
+            $user->name = $request->input('name');
         }
-        if ($request->has('email')) {
-            $user->email = $validatedData['email'];
+        if ($request->filled('email')) {
+            $user->email = $request->input('email');
         }
         $user->save();
 
