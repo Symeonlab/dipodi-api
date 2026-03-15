@@ -25,7 +25,7 @@ class UpdateUserProfileRequest extends FormRequest
         return [
             // User account fields (optional updates)
             'name' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'string', 'email', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users')->ignore($this->user()?->id)],
 
             // Sport/Activity Profile
             'discipline' => ['nullable', 'string', Rule::in(['FOOTBALL', 'FUTSAL', 'FITNESS', 'PADEL'])],

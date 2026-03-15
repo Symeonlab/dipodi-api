@@ -198,9 +198,8 @@ class WorkoutFeedbackController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            return ApiResponse::serverError(
-                config('app.debug') ? $e->getMessage() : __('api.feedback_save_failed')
-            );
+            \Log::error('Workout feedback save failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return ApiResponse::serverError(__('api.feedback_save_failed'));
         }
     }
 

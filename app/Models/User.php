@@ -25,7 +25,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'role',
+        // 'role' intentionally excluded — set explicitly in seeders/admin only to prevent privilege escalation
     ];
 
     /**
