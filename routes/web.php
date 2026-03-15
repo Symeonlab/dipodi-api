@@ -18,6 +18,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Health check endpoint for Sliplane / load balancer
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()], 200);
+});
+
 use App\Models\UserProgress; // <-- Add this import at the top
 use App\Models\Post; // <-- Add this import at the top
 

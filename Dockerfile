@@ -1,12 +1,12 @@
-# Dipoddi API - Laravel PHP Application
-# PHP 8.3 with necessary extensions for Laravel
+# Dipoddi API - Production Single-Container Setup
+# PHP 8.3 + Nginx + Supervisord for Sliplane deployment
 
 FROM php:8.3-fpm
 
 # Set working directory
 WORKDIR /var/www
 
-# Install system dependencies
+# Install system dependencies (including nginx)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     supervisor \
+    nginx \
     cron \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -45,29 +46,33 @@ RUN pecl install redis && docker-php-ext-enable redis
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data,root -u 1000 -d /home/dipodi dipodi
-RUN mkdir -p /home/dipodi/.composer && \
-    chown -R dipodi:dipodi /home/dipodi
+# Copy Nginx configuration
+COPY docker/nginx/sliplane.conf /etc/nginx/sites-available/default
 
-# Copy existing application directory contents
+# Copy Supervisord configuration
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Copy PHP production config
+COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
+
+# Copy application code
 COPY . /var/www
 
-# Copy existing application directory permissions
-COPY --chown=dipodi:dipodi . /var/www
+# Install PHP dependencies (production only)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
 
 # Set permissions for Laravel
-RUN chown -R dipodi:www-data /var/www \
+RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage \
     && chmod -R 775 /var/www/bootstrap/cache
 
-# Switch to non-root user
-USER dipodi
+# Create nginx log directory and pid file location
+RUN mkdir -p /run/nginx \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
+# Expose HTTP port
+EXPOSE 80
 
-# Start PHP-FPM
-CMD ["php-fpm"]
-
-
+# Start Nginx + PHP-FPM via Supervisord
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
