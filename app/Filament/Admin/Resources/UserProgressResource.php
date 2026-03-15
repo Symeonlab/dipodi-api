@@ -172,13 +172,13 @@ class UserProgressResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('workout_completed')
-                    ->label('Workout')
+                    ->label(__('filament.labels.workout_type'))
                     ->badge()
                     ->color('purple')
                     ->limit(20)
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Logged')
+                    ->label(__('filament.widgets.logged'))
                     ->since()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -198,7 +198,7 @@ class UserProgressResource extends Resource
                         'bad' => __('filament.moods.bad'),
                     ]),
                 Tables\Filters\Filter::make('has_weight')
-                    ->label('Has Weight')
+                    ->label(__('filament.filters.has_weight'))
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('weight')),
                 Tables\Filters\Filter::make('date')
                     ->form([
@@ -219,7 +219,7 @@ class UserProgressResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "User,Date,Weight,Waist,Chest,Hips,Mood,Workout,Notes\n";
@@ -231,8 +231,8 @@ class UserProgressResource extends Resource
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No progress logs yet')
-            ->emptyStateDescription('User progress logs from the mobile app will appear here.')
+            ->emptyStateHeading(__('filament.empty.progress_logs'))
+            ->emptyStateDescription(__('filament.empty.progress_logs_desc'))
             ->emptyStateIcon('heroicon-o-chart-bar');
     }
 
@@ -271,7 +271,7 @@ class UserProgressResource extends Resource
                     ])
                     ->columns(4),
 
-                Infolists\Components\Section::make('Activity')
+                Infolists\Components\Section::make(__('filament.sections.activity'))
                     ->icon('heroicon-o-bolt')
                     ->schema([
                         Infolists\Components\TextEntry::make('workout_completed')

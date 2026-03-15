@@ -80,7 +80,7 @@ class NutritionAdviceResource extends Resource
                             ->label(__('filament.labels.condition_name'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('e.g., Fatigue, Crampes, Migraine')
+                            ->placeholder(__('filament.placeholders.condition'))
                             ->columnSpan(2),
                     ])
                     ->columns(2),
@@ -110,12 +110,12 @@ class NutritionAdviceResource extends Resource
                         Forms\Components\Textarea::make('prophetic_advice_fr')
                             ->label(__('filament.labels.prophetic_advice_fr'))
                             ->rows(3)
-                            ->placeholder('Conseil en francais...')
+                            ->placeholder(__('filament.placeholders.advice_fr'))
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('prophetic_advice_en')
                             ->label(__('filament.labels.prophetic_advice_en'))
                             ->rows(3)
-                            ->placeholder('Advice in English...')
+                            ->placeholder(__('filament.placeholders.advice_en'))
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('prophetic_advice_ar')
                             ->label(__('filament.labels.prophetic_advice_ar'))
@@ -132,13 +132,13 @@ class NutritionAdviceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('condition_name')
-                    ->label('Condition')
+                    ->label(__('filament.labels.condition'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
                     ->icon('heroicon-o-heart'),
                 Tables\Columns\TextColumn::make('category')
-                    ->label('Category')
+                    ->label(__('filament.labels.category'))
                     ->badge()
                     ->getStateUsing(function (NutritionAdvice $record): string {
                         $name = strtolower($record->condition_name);
@@ -168,7 +168,7 @@ class NutritionAdviceResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('foods_to_avoid')
-                    ->label('Foods to Avoid')
+                    ->label(__('filament.labels.foods_to_avoid'))
                     ->badge()
                     ->color('danger')
                     ->separator(', ')
@@ -187,7 +187,7 @@ class NutritionAdviceResource extends Resource
                         return $value ?? '';
                     }),
                 Tables\Columns\TextColumn::make('foods_to_eat')
-                    ->label('Foods to Eat')
+                    ->label(__('filament.labels.foods_to_eat'))
                     ->badge()
                     ->color('success')
                     ->separator(', ')
@@ -206,7 +206,7 @@ class NutritionAdviceResource extends Resource
                         return $value ?? '';
                     }),
                 Tables\Columns\IconColumn::make('has_prophetic_advice')
-                    ->label('Prophetic')
+                    ->label(__('filament.labels.prophetic_advice'))
                     ->boolean()
                     ->getStateUsing(fn (NutritionAdvice $record): bool => !empty($record->prophetic_advice_fr) || !empty($record->prophetic_advice_en)),
                 Tables\Columns\TextColumn::make('created_at')
@@ -217,20 +217,20 @@ class NutritionAdviceResource extends Resource
             ->defaultSort('condition_name')
             ->filters([
                 Tables\Filters\Filter::make('has_prophetic_advice')
-                    ->label('Has Prophetic Advice')
+                    ->label(__('filament.filters.has_prophetic_advice'))
                     ->query(fn (Builder $query): Builder => $query->where(function ($q) {
                         $q->whereNotNull('prophetic_advice_fr')
                           ->orWhereNotNull('prophetic_advice_en')
                           ->orWhereNotNull('prophetic_advice_ar');
                     })),
                 Tables\Filters\Filter::make('sport_conditions')
-                    ->label('Sport Conditions')
+                    ->label(__('filament.filters.sport_conditions'))
                     ->query(fn (Builder $query): Builder => $query->whereIn('condition_name', [
                         'Fatigue', 'Crampes', 'Blessures', 'Tendinites', 'Entorse', 'Inflammation',
                         'Perte de poids', 'Prise de masse', 'Seche', 'Performance', 'Recuperation'
                     ])),
                 Tables\Filters\Filter::make('prophetic_medicine')
-                    ->label('Prophetic Medicine')
+                    ->label(__('filament.filters.prophetic_medicine'))
                     ->query(fn (Builder $query): Builder => $query->whereIn('condition_name', [
                         'Toux', 'Pharyngite', 'Migraine', 'Depression', 'Insomnies', 'Angine',
                         'Anemie', 'Diabete', 'Cholesterol', 'Hypertension', 'Asthme'
@@ -244,7 +244,7 @@ class NutritionAdviceResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "Condition,Foods to Avoid,Foods to Eat,Prophetic Advice (FR)\n";
@@ -258,8 +258,8 @@ class NutritionAdviceResource extends Resource
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No nutrition advice yet')
-            ->emptyStateDescription('Create your first nutrition advice entry to help users manage health conditions.')
+            ->emptyStateHeading(__('filament.empty.nutrition_advice'))
+            ->emptyStateDescription(__('filament.empty.nutrition_advice_desc'))
             ->emptyStateIcon('heroicon-o-light-bulb');
     }
 
@@ -267,37 +267,37 @@ class NutritionAdviceResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Condition')
+                Infolists\Components\Section::make(__('filament.labels.condition'))
                     ->schema([
                         Infolists\Components\TextEntry::make('condition_name')
-                            ->label('Condition Name')
+                            ->label(__('filament.labels.condition_name'))
                             ->size('lg')
                             ->weight('bold'),
                     ]),
-                Infolists\Components\Section::make('Food Recommendations')
+                Infolists\Components\Section::make(__('filament.sections.food_recommendations'))
                     ->schema([
                         Infolists\Components\TextEntry::make('foods_to_avoid')
-                            ->label('Foods to Avoid')
+                            ->label(__('filament.labels.foods_to_avoid'))
                             ->badge()
                             ->color('danger')
                             ->separator(', '),
                         Infolists\Components\TextEntry::make('foods_to_eat')
-                            ->label('Foods to Eat')
+                            ->label(__('filament.labels.foods_to_eat'))
                             ->badge()
                             ->color('success')
                             ->separator(', '),
                     ])
                     ->columns(2),
-                Infolists\Components\Section::make('Prophetic Medicine Advice')
+                Infolists\Components\Section::make(__('filament.sections.prophetic_medicine'))
                     ->schema([
                         Infolists\Components\TextEntry::make('prophetic_advice_fr')
-                            ->label('Francais')
+                            ->label(__('filament.labels.french'))
                             ->markdown(),
                         Infolists\Components\TextEntry::make('prophetic_advice_en')
-                            ->label('English')
+                            ->label(__('filament.labels.english'))
                             ->markdown(),
                         Infolists\Components\TextEntry::make('prophetic_advice_ar')
-                            ->label('Arabic')
+                            ->label(__('filament.labels.arabic'))
                             ->markdown()
                             ->extraAttributes(['dir' => 'rtl']),
                     ])

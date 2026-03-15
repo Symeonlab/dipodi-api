@@ -73,22 +73,22 @@ class FoodItemResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Food Information')
-                    ->description('Basic information about the food item')
+                Forms\Components\Section::make(__('filament.sections.food_info'))
+                    ->description(__('filament.sections.food_info_desc'))
                     ->icon('heroicon-o-identification')
                     ->schema([
                         Forms\Components\TextInput::make('name')
-                            ->label('Food Name')
+                            ->label(__('filament.labels.food_name'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('e.g., Pomme, Poulet grille, Riz complet'),
+                            ->placeholder(__('filament.placeholders.food_name')),
                         Forms\Components\Select::make('category')
-                            ->label('Meal Category')
+                            ->label(__('filament.labels.meal_category'))
                             ->options([
-                                'petitDejeuner' => 'Petit Dejeuner (Breakfast)',
-                                'platPrincipal' => 'Plat Principal (Main Dish)',
-                                'accompagnement' => 'Accompagnement (Side Dish)',
-                                'dessert' => 'Dessert',
+                                'petitDejeuner' => __('filament.food_categories.petit_dejeuner'),
+                                'platPrincipal' => __('filament.food_categories.plat_principal'),
+                                'accompagnement' => __('filament.food_categories.accompagnement'),
+                                'dessert' => __('filament.food_categories.dessert'),
                             ])
                             ->required()
                             ->native(false)
@@ -115,8 +115,8 @@ class FoodItemResource extends Resource
                             ->options([
                                 'pre_workout' => __('filament.meal_timing.pre_workout'),
                                 'post_workout' => __('filament.meal_timing.post_workout'),
-                                'recovery' => 'Recovery',
-                                'any' => 'Any Time',
+                                'recovery' => __('filament.meal_timing.recovery'),
+                                'any' => __('filament.meal_timing.any'),
                             ])
                             ->nullable()
                             ->native(false),
@@ -124,14 +124,14 @@ class FoodItemResource extends Resource
                     ->columns(3)
                     ->collapsible(),
 
-                Forms\Components\Section::make('Food Properties')
-                    ->description('Tags help categorize and filter foods')
+                Forms\Components\Section::make(__('filament.sections.food_properties'))
+                    ->description(__('filament.sections.food_properties_desc'))
                     ->icon('heroicon-o-tag')
                     ->schema([
                         Forms\Components\TagsInput::make('tags')
-                            ->label('Tags')
-                            ->placeholder('Add tags...')
-                            ->helperText('Common tags: fruit, legume, viande, poisson, produitLaitier, vegetarien, halal, bio, printemps, ete, automne, hiver')
+                            ->label(__('filament.labels.tags'))
+                            ->placeholder(__('filament.placeholders.add_tags'))
+                            ->helperText(__('filament.helper.tags_food'))
                             ->suggestions([
                                 'fruit', 'legume', 'viande', 'poisson', 'volaille',
                                 'produitLaitier', 'cereale', 'feculent', 'noix',
@@ -150,13 +150,13 @@ class FoodItemResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Food Name')
+                    ->label(__('filament.labels.food_name'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
                     ->icon('heroicon-o-cake'),
                 Tables\Columns\TextColumn::make('category')
-                    ->label('Category')
+                    ->label(__('filament.labels.category'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'petitDejeuner' => 'Petit Dejeuner',
@@ -181,7 +181,7 @@ class FoodItemResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('food_type')
-                    ->label('Type')
+                    ->label(__('filament.labels.type'))
                     ->badge()
                     ->getStateUsing(function (FoodItem $record): string {
                         $tags = $record->tags ?? [];
@@ -205,7 +205,7 @@ class FoodItemResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('season')
-                    ->label('Season')
+                    ->label(__('filament.filters.season'))
                     ->badge()
                     ->getStateUsing(function (FoodItem $record): ?string {
                         $tags = $record->tags ?? [];
@@ -218,7 +218,7 @@ class FoodItemResource extends Resource
                     })
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('tags')
-                    ->label('Tags')
+                    ->label(__('filament.labels.tags'))
                     ->badge()
                     ->color('gray')
                     ->separator(', ')
@@ -232,26 +232,26 @@ class FoodItemResource extends Resource
             ->defaultSort('name')
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->label('Category')
+                    ->label(__('filament.labels.category'))
                     ->options([
-                        'petitDejeuner' => 'Petit Dejeuner',
-                        'platPrincipal' => 'Plat Principal',
-                        'accompagnement' => 'Accompagnement',
-                        'dessert' => 'Dessert',
+                        'petitDejeuner' => __('filament.food_categories.petit_dejeuner'),
+                        'platPrincipal' => __('filament.food_categories.plat_principal'),
+                        'accompagnement' => __('filament.food_categories.accompagnement'),
+                        'dessert' => __('filament.food_categories.dessert'),
                     ])
                     ->multiple(),
                 Tables\Filters\SelectFilter::make('food_type')
-                    ->label('Food Type')
+                    ->label(__('filament.filters.food_type'))
                     ->options([
-                        'fruit' => 'Fruits',
-                        'legume' => 'Legumes',
-                        'viande' => 'Viande',
-                        'volaille' => 'Volaille',
-                        'poisson' => 'Poisson',
-                        'produitLaitier' => 'Produits Laitiers',
-                        'cereale' => 'Cereales',
-                        'feculent' => 'Feculents',
-                        'noix' => 'Noix & Graines',
+                        'fruit' => __('filament.food_types.fruit'),
+                        'legume' => __('filament.food_types.vegetable'),
+                        'viande' => __('filament.food_types.meat'),
+                        'volaille' => __('filament.food_types.poultry'),
+                        'poisson' => __('filament.food_types.fish'),
+                        'produitLaitier' => __('filament.food_types.dairy'),
+                        'cereale' => __('filament.food_types.grain'),
+                        'feculent' => __('filament.food_types.starch'),
+                        'noix' => __('filament.food_types.nuts'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['value'])) {
@@ -260,12 +260,12 @@ class FoodItemResource extends Resource
                         return $query->whereJsonContains('tags', $data['value']);
                     }),
                 Tables\Filters\SelectFilter::make('season')
-                    ->label('Season')
+                    ->label(__('filament.filters.season'))
                     ->options([
-                        'printemps' => 'Printemps',
-                        'ete' => 'Ete',
-                        'automne' => 'Automne',
-                        'hiver' => 'Hiver',
+                        'printemps' => __('filament.seasons.spring'),
+                        'ete' => __('filament.seasons.summer'),
+                        'automne' => __('filament.seasons.autumn'),
+                        'hiver' => __('filament.seasons.winter'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['value'])) {
@@ -274,7 +274,7 @@ class FoodItemResource extends Resource
                         return $query->whereJsonContains('tags', $data['value']);
                     }),
                 Tables\Filters\Filter::make('vegetarien')
-                    ->label('Vegetarien')
+                    ->label(__('filament.filters.vegetarian'))
                     ->query(fn (Builder $query): Builder => $query->whereJsonContains('tags', 'vegetarien')),
             ])
             ->actions([
@@ -285,16 +285,16 @@ class FoodItemResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('updateCategory')
-                        ->label('Update Category')
+                        ->label(__('filament.actions.update_category'))
                         ->icon('heroicon-o-tag')
                         ->form([
                             Forms\Components\Select::make('category')
-                                ->label('New Category')
+                                ->label(__('filament.labels.new_category'))
                                 ->options([
-                                    'petitDejeuner' => 'Petit Dejeuner',
-                                    'platPrincipal' => 'Plat Principal',
-                                    'accompagnement' => 'Accompagnement',
-                                    'dessert' => 'Dessert',
+                                    'petitDejeuner' => __('filament.food_categories.petit_dejeuner'),
+                                    'platPrincipal' => __('filament.food_categories.plat_principal'),
+                                    'accompagnement' => __('filament.food_categories.accompagnement'),
+                                    'dessert' => __('filament.food_categories.dessert'),
                                 ])
                                 ->required(),
                         ])
@@ -303,11 +303,11 @@ class FoodItemResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('addTag')
-                        ->label('Add Tag')
+                        ->label(__('filament.actions.add_tag'))
                         ->icon('heroicon-o-plus')
                         ->form([
                             Forms\Components\TextInput::make('tag')
-                                ->label('Tag to Add')
+                                ->label(__('filament.labels.tag_to_add'))
                                 ->required(),
                         ])
                         ->action(function (\Illuminate\Support\Collection $records, array $data): void {
@@ -321,7 +321,7 @@ class FoodItemResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "Name,Category,Tags\n";
@@ -333,8 +333,8 @@ class FoodItemResource extends Resource
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No food items yet')
-            ->emptyStateDescription('Add food items to build your nutrition database.')
+            ->emptyStateHeading(__('filament.empty.food_items'))
+            ->emptyStateDescription(__('filament.empty.food_items_desc'))
             ->emptyStateIcon('heroicon-o-cake');
     }
 
@@ -342,14 +342,14 @@ class FoodItemResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Food Details')
+                Infolists\Components\Section::make(__('filament.sections.food_details'))
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('Name')
+                            ->label(__('filament.labels.name'))
                             ->size('lg')
                             ->weight('bold'),
                         Infolists\Components\TextEntry::make('category')
-                            ->label('Category')
+                            ->label(__('filament.labels.category'))
                             ->badge()
                             ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'petitDejeuner' => 'Petit Dejeuner',
@@ -360,10 +360,10 @@ class FoodItemResource extends Resource
                             }),
                     ])
                     ->columns(2),
-                Infolists\Components\Section::make('Tags')
+                Infolists\Components\Section::make(__('filament.sections.tags'))
                     ->schema([
                         Infolists\Components\TextEntry::make('tags')
-                            ->label('Tags')
+                            ->label(__('filament.labels.tags'))
                             ->badge()
                             ->color('info')
                             ->separator(', '),

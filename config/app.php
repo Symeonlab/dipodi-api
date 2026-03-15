@@ -61,7 +61,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Dipodi App Key Hash
+    | Dipoddi App Key Hash
     |--------------------------------------------------------------------------
     |
     | SHA-256 hash of the app key that iOS clients must send in the

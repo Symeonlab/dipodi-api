@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Filament\Admin\Resources\PlayerProfileResource\Pages;
+
+use App\Filament\Admin\Resources\PlayerProfileResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ListRecords;
+
+class ListPlayerProfiles extends ListRecords
+{
+    protected static string $resource = PlayerProfileResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make(),
+        ];
+    }
+}

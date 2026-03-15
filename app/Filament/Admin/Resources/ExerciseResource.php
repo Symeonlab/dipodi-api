@@ -100,13 +100,13 @@ class ExerciseResource extends Resource
                             ->label(__('filament.labels.video_url'))
                             ->url()
                             ->maxLength(255)
-                            ->placeholder('https://youtube.com/shorts/...')
+                            ->placeholder(__('filament.placeholders.video_url'))
                             ->suffixIcon('heroicon-o-play')
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('met_value')
                             ->numeric()
                             ->label(__('filament.labels.met_value'))
-                            ->placeholder('e.g., 4.0, 8.0, 12.0')
+                            ->placeholder(__('filament.placeholders.met_value'))
                             ->helperText(__('filament.helper.met_value'))
                             ->suffix('MET'),
                     ]),
@@ -119,7 +119,7 @@ class ExerciseResource extends Resource
                     ->schema([
                         Forms\Components\Textarea::make('description')
                             ->rows(3)
-                            ->placeholder('Describe how to perform this exercise...')
+                            ->placeholder(__('filament.placeholders.description'))
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -130,7 +130,7 @@ class ExerciseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Exercise')
+                    ->label(__('filament.labels.exercise'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold'),
@@ -148,7 +148,7 @@ class ExerciseResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('met_value')
-                    ->label('MET')
+                    ->label(__('filament.labels.met_value'))
                     ->numeric()
                     ->sortable()
                     ->badge()
@@ -159,14 +159,14 @@ class ExerciseResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('favoritedByUsers_count')
-                    ->label('Favorites')
+                    ->label(__('filament.labels.favorites'))
                     ->counts('favoritedByUsers')
                     ->sortable()
                     ->badge()
                     ->color('danger')
                     ->icon('heroicon-o-heart'),
                 Tables\Columns\IconColumn::make('video_url')
-                    ->label('Video')
+                    ->label(__('filament.labels.video'))
                     ->boolean()
                     ->trueIcon('heroicon-o-play-circle')
                     ->falseIcon('heroicon-o-x-circle')
@@ -195,13 +195,13 @@ class ExerciseResource extends Resource
                     ->multiple()
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('category_type')
-                    ->label('Exercise Type')
+                    ->label(__('filament.filters.exercise_type'))
                     ->options([
-                        'kine' => 'Kine (Mobility & Renforcement)',
-                        'maison' => 'Home Workouts',
-                        'bonus' => 'Bonus (Abs, Push-ups, Planks)',
-                        'cardio' => 'Cardio Equipment',
-                        'musculation' => 'Musculation (Gym)',
+                        'kine' => __('filament.categories.kine_renforcement') . ' & ' . __('filament.categories.kine_mobilite'),
+                        'maison' => __('filament.categories.maison'),
+                        'bonus' => __('filament.categories.bonus'),
+                        'cardio' => __('filament.categories.cardio'),
+                        'musculation' => __('filament.categories.musculation'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['value'])) return $query;
@@ -216,7 +216,7 @@ class ExerciseResource extends Resource
                         };
                     }),
                 Tables\Filters\Filter::make('has_video')
-                    ->label('Has Video')
+                    ->label(__('filament.filters.has_video'))
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('video_url')),
                 Tables\Filters\Filter::make('high_intensity')
                     ->label(__('filament.labels.high_intensity'))
@@ -224,7 +224,7 @@ class ExerciseResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('watch')
-                    ->label('Watch')
+                    ->label(__('filament.actions.watch'))
                     ->icon('heroicon-o-play')
                     ->color('success')
                     ->url(fn (Exercise $record): ?string => $record->video_url)
@@ -237,11 +237,11 @@ class ExerciseResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('updateCategory')
-                        ->label('Update Category')
+                        ->label(__('filament.actions.update_category'))
                         ->icon('heroicon-o-tag')
                         ->form([
                             Forms\Components\Select::make('category')
-                                ->label('New Category')
+                                ->label(__('filament.labels.category'))
                                 ->options(self::getCategoryOptions())
                                 ->required(),
                         ])
@@ -252,7 +252,7 @@ class ExerciseResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "Name,Category,Sub-Category,MET,Video URL\n";
@@ -265,8 +265,8 @@ class ExerciseResource extends Resource
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No exercises yet')
-            ->emptyStateDescription('Add exercises with video links for your training programs.')
+            ->emptyStateHeading(__('filament.empty.exercises'))
+            ->emptyStateDescription(__('filament.empty.exercises_desc'))
             ->emptyStateIcon('heroicon-o-play-circle');
     }
 
@@ -274,34 +274,34 @@ class ExerciseResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Exercise Details')
+                Infolists\Components\Section::make(__('filament.sections.exercise_info'))
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
-                            ->label('Name')
+                            ->label(__('filament.labels.name'))
                             ->size('lg')
                             ->weight('bold'),
                         Infolists\Components\TextEntry::make('category')
-                            ->label('Category')
+                            ->label(__('filament.labels.category'))
                             ->badge(),
                         Infolists\Components\TextEntry::make('sub_category')
-                            ->label('Sub-Category')
+                            ->label(__('filament.labels.sub_category'))
                             ->badge(),
                         Infolists\Components\TextEntry::make('met_value')
-                            ->label('MET Value')
+                            ->label(__('filament.labels.met_value'))
                             ->badge()
                             ->suffix(' MET'),
                     ])
                     ->columns(2),
-                Infolists\Components\Section::make('Video')
+                Infolists\Components\Section::make(__('filament.labels.video'))
                     ->schema([
                         Infolists\Components\TextEntry::make('video_url')
-                            ->label('Video URL')
+                            ->label(__('filament.labels.video_url'))
                             ->url(fn ($state) => $state)
                             ->openUrlInNewTab()
                             ->icon('heroicon-o-play'),
                     ])
                     ->visible(fn ($record) => !empty($record->video_url)),
-                Infolists\Components\Section::make('Description')
+                Infolists\Components\Section::make(__('filament.sections.description'))
                     ->schema([
                         Infolists\Components\TextEntry::make('description')
                             ->label('')

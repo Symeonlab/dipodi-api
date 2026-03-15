@@ -69,12 +69,12 @@ class InterestResource extends Resource
                             ->label(__('filament.labels.unique_key'))
                             ->required()
                             ->unique(ignoreRecord: true)
-                            ->placeholder('e.g., football, fitness, nutrition')
+                            ->placeholder(__('filament.placeholders.interest_key'))
                             ->helperText(__('filament.helper.unique_key')),
                         Forms\Components\TextInput::make('icon')
                             ->label(__('filament.labels.icon'))
                             ->required()
-                            ->placeholder('e.g., football, dumbbell, heart')
+                            ->placeholder(__('filament.placeholders.interest_icon'))
                             ->helperText(__('filament.helper.icon_identifier')),
                     ])
                     ->columns(2),
@@ -106,7 +106,7 @@ class InterestResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('icon')
-                    ->label('Icon')
+                    ->label(__('filament.labels.icon'))
                     ->badge()
                     ->color('info')
                     ->icon(fn (string $state): string => match ($state) {
@@ -117,32 +117,32 @@ class InterestResource extends Resource
                         default => 'heroicon-o-star',
                     }),
                 Tables\Columns\TextColumn::make('key')
-                    ->label('Key')
+                    ->label(__('filament.labels.key'))
                     ->searchable()
                     ->copyable()
                     ->copyMessage('Key copied')
                     ->fontFamily('mono'),
                 Tables\Columns\TextColumn::make('name_en')
-                    ->label('English')
+                    ->label(__('filament.labels.english'))
                     ->searchable()
                     ->weight('medium'),
                 Tables\Columns\TextColumn::make('name_fr')
-                    ->label('Francais')
+                    ->label(__('filament.labels.french'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name_ar')
-                    ->label('Arabic')
+                    ->label(__('filament.labels.arabic'))
                     ->searchable()
                     ->alignRight()
                     ->extraAttributes(['dir' => 'rtl']),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(__('filament.labels.created'))
                     ->since()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([])
             ->actions([
                 Tables\Actions\Action::make('duplicate')
-                    ->label('Duplicate')
+                    ->label(__('filament.actions.duplicate'))
                     ->icon('heroicon-o-document-duplicate')
                     ->color('gray')
                     ->action(function (Interest $record) {
@@ -162,7 +162,7 @@ class InterestResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "Key,Icon,Name (EN),Name (FR),Name (AR)\n";
@@ -173,8 +173,8 @@ class InterestResource extends Resource
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No interests defined')
-            ->emptyStateDescription('Add interests that users can select during onboarding via the mobile app.')
+            ->emptyStateHeading(__('filament.empty.interests'))
+            ->emptyStateDescription(__('filament.empty.interests_desc'))
             ->emptyStateIcon('heroicon-o-heart');
     }
 
@@ -182,11 +182,11 @@ class InterestResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Interest Details')
+                Infolists\Components\Section::make(__('filament.sections.interest_details'))
                     ->icon('heroicon-o-heart')
                     ->schema([
                         Infolists\Components\TextEntry::make('key')
-                            ->label('Unique Key')
+                            ->label(__('filament.labels.unique_key'))
                             ->copyable()
                             ->fontFamily('mono'),
                         Infolists\Components\TextEntry::make('icon')
@@ -195,15 +195,15 @@ class InterestResource extends Resource
                     ])
                     ->columns(2),
 
-                Infolists\Components\Section::make('Translations')
+                Infolists\Components\Section::make(__('filament.sections.translations'))
                     ->icon('heroicon-o-language')
                     ->schema([
                         Infolists\Components\TextEntry::make('name_en')
-                            ->label('English'),
+                            ->label(__('filament.labels.english')),
                         Infolists\Components\TextEntry::make('name_fr')
-                            ->label('Francais'),
+                            ->label(__('filament.labels.french')),
                         Infolists\Components\TextEntry::make('name_ar')
-                            ->label('Arabic')
+                            ->label(__('filament.labels.arabic'))
                             ->extraAttributes(['dir' => 'rtl']),
                     ])
                     ->columns(3),

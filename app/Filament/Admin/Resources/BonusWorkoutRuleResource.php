@@ -72,7 +72,7 @@ class BonusWorkoutRuleResource extends Resource
                                 'DÉBUTANT' => __('filament.difficulty_levels.debutant'),
                                 'INTERMÉDIAIRE' => __('filament.difficulty_levels.intermediaire'),
                                 'AVANCÉ' => __('filament.difficulty_levels.avance'),
-                                'ALL' => 'All Levels',
+                                'ALL' => __('filament.difficulty_levels.all'),
                             ])
                             ->required()
                             ->native(false),
@@ -82,12 +82,12 @@ class BonusWorkoutRuleResource extends Resource
                                 'ABDOS' => __('filament.bonus_types.abdos'),
                                 'POMPES' => __('filament.bonus_types.pompes'),
                                 'GAINAGE' => __('filament.bonus_types.gainage'),
-                                'GAINAGE + ABDOS' => 'Gainage + Abdos',
-                                'GAINAGE + POMPES' => 'Gainage + Pompes',
-                                'POMPES + ABDOS' => 'Pompes + Abdos',
-                                'POMPES + GAINAGE' => 'Pompes + Gainage',
-                                'ABDOS + GAINAGE' => 'Abdos + Gainage',
-                                'ABDOS + POMPES' => 'Abdos + Pompes',
+                                'GAINAGE + ABDOS' => __('filament.bonus_combo_types.gainage_abdos'),
+                                'GAINAGE + POMPES' => __('filament.bonus_combo_types.gainage_pompes'),
+                                'POMPES + ABDOS' => __('filament.bonus_combo_types.pompes_abdos'),
+                                'POMPES + GAINAGE' => __('filament.bonus_combo_types.pompes_gainage'),
+                                'ABDOS + GAINAGE' => __('filament.bonus_combo_types.abdos_gainage'),
+                                'ABDOS + POMPES' => __('filament.bonus_combo_types.abdos_pompes'),
                             ])
                             ->required()
                             ->native(false)
@@ -100,28 +100,28 @@ class BonusWorkoutRuleResource extends Resource
                     ->icon('heroicon-o-chart-bar')
                     ->schema([
                         Forms\Components\TextInput::make('sets')
-                            ->label('Sets')
+                            ->label(__('filament.labels.sets'))
                             ->required()
-                            ->placeholder('e.g., 3, 4, 5')
-                            ->helperText('Number of sets to perform'),
+                            ->placeholder(__('filament.placeholders.sets_bonus'))
+                            ->helperText(__('filament.helper.sets_bonus')),
                         Forms\Components\TextInput::make('reps')
-                            ->label('Reps')
+                            ->label(__('filament.labels.reps'))
                             ->required()
-                            ->placeholder('e.g., 10-20, 15, 20-30')
-                            ->helperText('Repetitions per set (can be a range)'),
+                            ->placeholder(__('filament.placeholders.reps_bonus'))
+                            ->helperText(__('filament.helper.reps_bonus')),
                         Forms\Components\TextInput::make('recovery')
-                            ->label('Recovery Time')
+                            ->label(__('filament.labels.recovery_time'))
                             ->required()
-                            ->placeholder('e.g., 45 sec, 1 min')
-                            ->helperText('Rest between sets'),
+                            ->placeholder(__('filament.placeholders.recovery_bonus'))
+                            ->helperText(__('filament.helper.recovery_bonus')),
                         Forms\Components\TextInput::make('duration')
-                            ->label('Total Duration')
-                            ->placeholder('e.g., 12 MIN, 20 MIN')
-                            ->helperText('Expected workout duration'),
+                            ->label(__('filament.labels.total_duration'))
+                            ->placeholder(__('filament.placeholders.duration_bonus'))
+                            ->helperText(__('filament.helper.duration_bonus')),
                         Forms\Components\TextInput::make('exercise_count')
-                            ->label('Exercise Count')
-                            ->placeholder('e.g., 3-4, 4-5')
-                            ->helperText('Number of exercises in the workout'),
+                            ->label(__('filament.labels.exercise_count'))
+                            ->placeholder(__('filament.placeholders.exercise_count_bonus'))
+                            ->helperText(__('filament.helper.exercise_count_bonus')),
                     ])
                     ->columns(3),
             ]);
@@ -132,7 +132,7 @@ class BonusWorkoutRuleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('level')
-                    ->label('Level')
+                    ->label(__('filament.labels.level'))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'DÉBUTANT' => 'success',
@@ -150,7 +150,7 @@ class BonusWorkoutRuleResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->label('Type')
+                    ->label(__('filament.labels.type'))
                     ->badge()
                     ->color(fn (string $state): string => match (true) {
                         str_contains($state, '+') => 'purple',
@@ -162,27 +162,27 @@ class BonusWorkoutRuleResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sets')
-                    ->label('Sets')
+                    ->label(__('filament.labels.sets'))
                     ->alignCenter()
                     ->badge()
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('reps')
-                    ->label('Reps')
+                    ->label(__('filament.labels.reps'))
                     ->alignCenter()
                     ->badge()
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('recovery')
-                    ->label('Recovery')
+                    ->label(__('filament.labels.recovery'))
                     ->alignCenter()
                     ->icon('heroicon-o-clock'),
                 Tables\Columns\TextColumn::make('duration')
-                    ->label('Duration')
+                    ->label(__('filament.labels.duration'))
                     ->alignCenter()
                     ->badge()
                     ->color('success')
                     ->placeholder('-'),
                 Tables\Columns\TextColumn::make('exercise_count')
-                    ->label('Exercises')
+                    ->label(__('filament.labels.exercises'))
                     ->alignCenter()
                     ->badge()
                     ->color('info')
@@ -191,28 +191,28 @@ class BonusWorkoutRuleResource extends Resource
             ->defaultSort('level')
             ->groups([
                 Tables\Grouping\Group::make('level')
-                    ->label('Difficulty Level')
+                    ->label(__('filament.labels.difficulty_level'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('type')
-                    ->label('Workout Type')
+                    ->label(__('filament.labels.workout_type'))
                     ->collapsible(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('level')
-                    ->label('Level')
+                    ->label(__('filament.labels.level'))
                     ->options([
-                        'DÉBUTANT' => 'Debutant',
-                        'INTERMÉDIAIRE' => 'Intermediaire',
-                        'AVANCÉ' => 'Avance',
-                        'ALL' => 'All Levels',
+                        'DÉBUTANT' => __('filament.difficulty_levels.debutant'),
+                        'INTERMÉDIAIRE' => __('filament.difficulty_levels.intermediaire'),
+                        'AVANCÉ' => __('filament.difficulty_levels.avance'),
+                        'ALL' => __('filament.difficulty_levels.all'),
                     ])
                     ->multiple(),
                 Tables\Filters\SelectFilter::make('type')
-                    ->label('Type')
+                    ->label(__('filament.labels.type'))
                     ->options([
-                        'ABDOS' => 'Abdos',
-                        'POMPES' => 'Pompes',
-                        'GAINAGE' => 'Gainage',
+                        'ABDOS' => __('filament.bonus_types.abdos'),
+                        'POMPES' => __('filament.bonus_types.pompes'),
+                        'GAINAGE' => __('filament.bonus_types.gainage'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['values'])) {
@@ -226,12 +226,12 @@ class BonusWorkoutRuleResource extends Resource
                     })
                     ->multiple(),
                 Tables\Filters\Filter::make('combined_workouts')
-                    ->label('Combined Workouts')
+                    ->label(__('filament.filters.combined_workouts'))
                     ->query(fn (Builder $query): Builder => $query->where('type', 'LIKE', '%+%')),
             ])
             ->actions([
                 Tables\Actions\Action::make('duplicate')
-                    ->label('Duplicate')
+                    ->label(__('filament.actions.duplicate'))
                     ->icon('heroicon-o-document-duplicate')
                     ->color('gray')
                     ->action(function (BonusWorkoutRule $record) {
@@ -252,16 +252,16 @@ class BonusWorkoutRuleResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('updateLevel')
-                        ->label('Update Level')
+                        ->label(__('filament.actions.update_level'))
                         ->icon('heroicon-o-arrow-trending-up')
                         ->form([
                             Forms\Components\Select::make('level')
-                                ->label('New Level')
+                                ->label(__('filament.labels.new_level'))
                                 ->options([
-                                    'DÉBUTANT' => 'Debutant',
-                                    'INTERMÉDIAIRE' => 'Intermediaire',
-                                    'AVANCÉ' => 'Avance',
-                                    'ALL' => 'All Levels',
+                                    'DÉBUTANT' => __('filament.difficulty_levels.debutant'),
+                                    'INTERMÉDIAIRE' => __('filament.difficulty_levels.intermediaire'),
+                                    'AVANCÉ' => __('filament.difficulty_levels.avance'),
+                                    'ALL' => __('filament.difficulty_levels.all'),
                                 ])
                                 ->required(),
                         ])
@@ -270,7 +270,7 @@ class BonusWorkoutRuleResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "Level,Type,Sets,Reps,Recovery,Duration,Exercise Count\n";
@@ -281,8 +281,8 @@ class BonusWorkoutRuleResource extends Resource
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No bonus workout rules')
-            ->emptyStateDescription('Create rules to define bonus workout parameters for different levels.')
+            ->emptyStateHeading(__('filament.empty.bonus_rules'))
+            ->emptyStateDescription(__('filament.empty.bonus_rules_desc'))
             ->emptyStateIcon('heroicon-o-fire');
     }
 
@@ -332,12 +332,12 @@ class BonusWorkoutRuleResource extends Resource
                         Infolists\Components\TextEntry::make('duration')
                             ->badge()
                             ->color('purple')
-                            ->placeholder('Not specified'),
+                            ->placeholder(__('filament.placeholders.not_set')),
                         Infolists\Components\TextEntry::make('exercise_count')
-                            ->label('Exercises')
+                            ->label(__('filament.labels.exercises'))
                             ->badge()
                             ->color('gray')
-                            ->placeholder('Not specified'),
+                            ->placeholder(__('filament.placeholders.not_set')),
                     ])
                     ->columns(5),
             ]);

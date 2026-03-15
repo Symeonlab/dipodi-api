@@ -12,10 +12,10 @@ class StatsOverviewWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Users', User::count())->color('success'),
-            Stat::make('New Users (7 Days)', User::where('created_at', '>=', now()->subWeek())->count()),
-            Stat::make('Total Progress Logs', UserProgress::count())->color('warning'),
-            Stat::make('Published Posts', Post::where('is_published', true)->count())->color('info'),
+            Stat::make(__('filament.widgets.total_users'), User::count())->color('success'),
+            Stat::make(__('filament.widgets.new_users_7_days'), User::where('created_at', '>=', now()->subWeek())->count()),
+            Stat::make(__('filament.widgets.total_progress_logs'), UserProgress::count())->color('warning'),
+            Stat::make(__('filament.widgets.published_posts'), Post::where('is_published', true)->count())->color('info'),
         ];
     }
 }

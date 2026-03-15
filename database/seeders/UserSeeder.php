@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
 
         // 1. --- CREATE YOUR ADMIN ACCOUNT ---
         $adminUser = User::create([
-            'name' => 'Admin Dipodi',
+            'name' => 'Admin Dipoddi',
             'email' => 'labadarios@gmail.com',
             'password' => Hash::make('Nerson007'),
             'role' => 'admin', // Set the role to 'admin'

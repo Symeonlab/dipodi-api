@@ -59,12 +59,12 @@ class WorkoutSessionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(__('filament.labels.user'))
                     ->searchable()
                     ->sortable()
                     ->icon('heroicon-o-user'),
                 Tables\Columns\TextColumn::make('day')
-                    ->label('Day')
+                    ->label(__('filament.labels.day'))
                     ->badge()
                     ->color(fn (string $state): string => match (strtolower($state)) {
                         'monday', 'lundi' => 'info',
@@ -78,28 +78,28 @@ class WorkoutSessionResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('theme')
-                    ->label('Theme')
+                    ->label(__('filament.sections.theme'))
                     ->searchable()
                     ->sortable()
                     ->badge()
                     ->color('info'),
                 Tables\Columns\TextColumn::make('exercises_count')
-                    ->label('Exercises')
+                    ->label(__('filament.labels.exercises'))
                     ->counts('exercises')
                     ->badge()
                     ->color('success'),
                 Tables\Columns\IconColumn::make('has_warmup')
-                    ->label('Warmup')
+                    ->label(__('filament.labels.warmup'))
                     ->getStateUsing(fn (WorkoutSession $record): bool => !empty($record->warmup))
                     ->boolean()
                     ->toggleable(),
                 Tables\Columns\IconColumn::make('has_finisher')
-                    ->label('Finisher')
+                    ->label(__('filament.labels.finisher'))
                     ->getStateUsing(fn (WorkoutSession $record): bool => !empty($record->finisher))
                     ->boolean()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Generated')
+                    ->label(__('filament.labels.generated'))
                     ->dateTime('M d, Y')
                     ->sortable()
                     ->since(),
@@ -112,16 +112,16 @@ class WorkoutSessionResource extends Resource
                     ->preload(),
                 Tables\Filters\SelectFilter::make('day')
                     ->options([
-                        'Monday' => 'Monday',
-                        'Tuesday' => 'Tuesday',
-                        'Wednesday' => 'Wednesday',
-                        'Thursday' => 'Thursday',
-                        'Friday' => 'Friday',
-                        'Saturday' => 'Saturday',
-                        'Sunday' => 'Sunday',
+                        'Monday' => __('filament.days.monday'),
+                        'Tuesday' => __('filament.days.tuesday'),
+                        'Wednesday' => __('filament.days.wednesday'),
+                        'Thursday' => __('filament.days.thursday'),
+                        'Friday' => __('filament.days.friday'),
+                        'Saturday' => __('filament.days.saturday'),
+                        'Sunday' => __('filament.days.sunday'),
                     ]),
                 Tables\Filters\Filter::make('this_week')
-                    ->label('This Week')
+                    ->label(__('filament.labels.this_week'))
                     ->query(fn (Builder $query): Builder => $query->where('created_at', '>=', now()->startOfWeek())),
             ])
             ->actions([
@@ -132,8 +132,8 @@ class WorkoutSessionResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('No workout sessions yet')
-            ->emptyStateDescription('Workout sessions are generated when users request a plan via the mobile app.')
+            ->emptyStateHeading(__('filament.empty.workout_sessions'))
+            ->emptyStateDescription(__('filament.empty.workout_sessions_desc'))
             ->emptyStateIcon('heroicon-o-calendar-days');
     }
 
@@ -141,14 +141,14 @@ class WorkoutSessionResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Session Details')
+                Infolists\Components\Section::make(__('filament.sections.session_details'))
                     ->icon('heroicon-o-calendar-days')
                     ->schema([
                         Infolists\Components\TextEntry::make('user.name')
-                            ->label('User')
+                            ->label(__('filament.labels.user'))
                             ->icon('heroicon-o-user'),
                         Infolists\Components\TextEntry::make('user.email')
-                            ->label('Email'),
+                            ->label(__('filament.labels.email')),
                         Infolists\Components\TextEntry::make('day')
                             ->badge()
                             ->color('info'),
@@ -156,21 +156,21 @@ class WorkoutSessionResource extends Resource
                             ->badge()
                             ->color('purple'),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('Generated')
+                            ->label(__('filament.labels.generated'))
                             ->dateTime('F j, Y g:i A'),
                     ])
                     ->columns(5),
 
-                Infolists\Components\Section::make('Warmup')
+                Infolists\Components\Section::make(__('filament.sections.warmup'))
                     ->icon('heroicon-o-fire')
                     ->schema([
                         Infolists\Components\TextEntry::make('warmup')
                             ->label('')
-                            ->placeholder('No warmup defined'),
+                            ->placeholder(__('filament.placeholders.no_warmup')),
                     ])
                     ->collapsible(),
 
-                Infolists\Components\Section::make('Exercises')
+                Infolists\Components\Section::make(__('filament.labels.exercises'))
                     ->icon('heroicon-o-play-circle')
                     ->schema([
                         Infolists\Components\RepeatableEntry::make('exercises')
@@ -187,21 +187,21 @@ class WorkoutSessionResource extends Resource
                                     ->badge()
                                     ->color('warning'),
                                 Infolists\Components\TextEntry::make('video_url')
-                                    ->label('Video')
+                                    ->label(__('filament.labels.video'))
                                     ->url(fn (?string $state): ?string => $state)
                                     ->openUrlInNewTab()
                                     ->icon('heroicon-o-play')
-                                    ->placeholder('No video'),
+                                    ->placeholder(__('filament.placeholders.no_video')),
                             ])
                             ->columns(5),
                     ]),
 
-                Infolists\Components\Section::make('Finisher')
+                Infolists\Components\Section::make(__('filament.sections.finisher'))
                     ->icon('heroicon-o-flag')
                     ->schema([
                         Infolists\Components\TextEntry::make('finisher')
                             ->label('')
-                            ->placeholder('No finisher defined'),
+                            ->placeholder(__('filament.placeholders.no_finisher')),
                     ])
                     ->collapsible(),
             ]);

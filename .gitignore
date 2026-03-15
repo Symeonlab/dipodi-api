@@ -17,3 +17,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/.claude/
+*.xlsx
+*.pdf
+food_items_extracted.json
+compose.yaml.sail.bak

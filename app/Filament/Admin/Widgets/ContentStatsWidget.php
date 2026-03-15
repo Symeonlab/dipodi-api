@@ -44,7 +44,7 @@ class ContentStatsWidget extends BaseWidget
                 ->color('success'),
 
             Stat::make(__('filament.dashboard.player_profiles'), PlayerProfile::count())
-                ->description('Tank, Magicien, Sentinelle...')
+                ->description(__('filament.widgets.player_profiles_desc'))
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('purple'),
         ];

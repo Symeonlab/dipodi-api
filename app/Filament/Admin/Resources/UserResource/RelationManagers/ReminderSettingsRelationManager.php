@@ -11,7 +11,12 @@ use Filament\Tables\Table;
 class ReminderSettingsRelationManager extends RelationManager
 {
     protected static string $relationship = 'reminderSettings';
-    protected static ?string $title = 'Reminder Settings';
+    protected static ?string $title = null;
+
+    public static function getTitle($ownerRecord, string $pageClass): string
+    {
+        return __('filament.sections.reminder_settings');
+    }
 
     // This is a HasOne relationship, so we use a Form and Table
     // to edit the single related record.
@@ -51,7 +56,7 @@ class ReminderSettingsRelationManager extends RelationManager
             ->headerActions([
                 // This button creates the settings if they don't exist
                 Tables\Actions\Action::make('create')
-                    ->label('Create Default Settings')
+                    ->label(__('filament.actions.create_default_settings'))
                     ->action(fn ($livewire) => $livewire->ownerRecord->reminderSettings()->firstOrCreate())
                     ->hidden(fn ($livewire) => $livewire->ownerRecord->reminderSettings()->exists()),
             ])

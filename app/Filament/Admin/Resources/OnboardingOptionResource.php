@@ -111,28 +111,28 @@ class OnboardingOptionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('type')
-                    ->label('Type')
+                    ->label(__('filament.labels.type'))
                     ->badge()
                     ->color(fn (string $state): string => self::getTypeColor($state))
                     ->icon(fn (string $state): string => self::getTypeIcon($state))
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('key')
-                    ->label('Key')
+                    ->label(__('filament.labels.key'))
                     ->searchable()
                     ->copyable()
                     ->fontFamily('mono')
                     ->size('sm'),
                 Tables\Columns\TextColumn::make('name_en')
-                    ->label('English')
+                    ->label(__('filament.labels.english'))
                     ->searchable()
                     ->limit(30),
                 Tables\Columns\TextColumn::make('name_fr')
-                    ->label('Francais')
+                    ->label(__('filament.labels.french'))
                     ->searchable()
                     ->limit(30),
                 Tables\Columns\TextColumn::make('name_ar')
-                    ->label('Arabic')
+                    ->label(__('filament.labels.arabic'))
                     ->searchable()
                     ->limit(30)
                     ->alignRight()
@@ -142,24 +142,24 @@ class OnboardingOptionResource extends Resource
             ->defaultGroup('type')
             ->groups([
                 Tables\Grouping\Group::make('type')
-                    ->label('Option Type')
+                    ->label(__('filament.labels.option_type'))
                     ->collapsible()
                     ->titlePrefixedWithLabel(false),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
-                    ->label('Type')
+                    ->label(__('filament.labels.type'))
                     ->options(self::getTypeOptions())
                     ->multiple()
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('category_group')
-                    ->label('Category')
+                    ->label(__('filament.labels.category'))
                     ->options([
-                        'sport' => 'Sport & Discipline',
-                        'profile' => 'Player Profiles',
-                        'health' => 'Health & Injury',
-                        'nutrition' => 'Nutrition & Diet',
-                        'preferences' => 'User Preferences',
+                        'sport' => __('filament.filters.sport_discipline'),
+                        'profile' => __('filament.resources.player_profiles'),
+                        'health' => __('filament.filters.health_injury'),
+                        'nutrition' => __('filament.filters.nutrition_diet'),
+                        'preferences' => __('filament.filters.user_preferences'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         if (empty($data['value'])) return $query;
@@ -180,7 +180,7 @@ class OnboardingOptionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('duplicate')
-                    ->label('Duplicate')
+                    ->label(__('filament.actions.duplicate'))
                     ->icon('heroicon-o-document-duplicate')
                     ->color('gray')
                     ->action(function (OnboardingOption $record) {
@@ -199,11 +199,11 @@ class OnboardingOptionResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('updateType')
-                        ->label('Update Type')
+                        ->label(__('filament.actions.update_type'))
                         ->icon('heroicon-o-tag')
                         ->form([
                             Forms\Components\Select::make('type')
-                                ->label('New Type')
+                                ->label(__('filament.labels.new_type'))
                                 ->options(self::getTypeOptions())
                                 ->required()
                                 ->searchable(),
@@ -213,7 +213,7 @@ class OnboardingOptionResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "Type,Key,Name (EN),Name (FR),Name (AR)\n";
@@ -224,8 +224,8 @@ class OnboardingOptionResource extends Resource
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No onboarding options')
-            ->emptyStateDescription('Create options for the user onboarding flow.')
+            ->emptyStateHeading(__('filament.empty.onboarding_options'))
+            ->emptyStateDescription(__('filament.empty.onboarding_options_desc'))
             ->emptyStateIcon('heroicon-o-queue-list');
     }
 

@@ -135,7 +135,7 @@ class WorkoutThemeRuleResource extends Resource
                         Forms\Components\TextInput::make('duration')
                             ->placeholder(__('filament.placeholders.duration')),
                         Forms\Components\TextInput::make('charges')
-                            ->placeholder('e.g., 85-100%'),
+                            ->placeholder(__('filament.placeholders.charges')),
                         Forms\Components\TextInput::make('speed_intensity')
                             ->label(__('filament.labels.speed_intensity'))
                             ->placeholder(__('filament.placeholders.speed')),
@@ -163,7 +163,7 @@ class WorkoutThemeRuleResource extends Resource
                         Forms\Components\TextInput::make('sleep_requirement')
                             ->placeholder(__('filament.placeholders.sleep_duration')),
                         Forms\Components\TextInput::make('hydration')
-                            ->placeholder('e.g., 1.00L'),
+                            ->placeholder(__('filament.placeholders.hydration')),
                         Forms\Components\TextInput::make('freshness_24h')
                             ->label(__('filament.labels.freshness_24h'))
                             ->numeric()
@@ -180,10 +180,10 @@ class WorkoutThemeRuleResource extends Resource
                             ->label(__('filament.labels.supercomp_window'))
                             ->placeholder(__('filament.placeholders.supercomp')),
                         Forms\Components\TextInput::make('elastic_recoil')
-                            ->placeholder('e.g., Diminue'),
+                            ->placeholder(__('filament.placeholders.elastic_recoil')),
                         Forms\Components\TextInput::make('cfa')
-                            ->label('CFA')
-                            ->placeholder('e.g., Moyen'),
+                            ->label(__('filament.labels.cfa'))
+                            ->placeholder(__('filament.placeholders.cfa')),
                     ])
                     ->columns(4)
                     ->collapsible(),
@@ -192,13 +192,13 @@ class WorkoutThemeRuleResource extends Resource
                     ->icon('heroicon-o-exclamation-triangle')
                     ->schema([
                         Forms\Components\TextInput::make('daily_alert_threshold')
-                            ->placeholder('e.g., 600 u.a.'),
+                            ->placeholder(__('filament.placeholders.daily_alert')),
                         Forms\Components\TextInput::make('weekly_alert_threshold')
-                            ->placeholder('e.g., 1200 u.a.'),
+                            ->placeholder(__('filament.placeholders.weekly_alert')),
                         Forms\Components\TextInput::make('gain_prediction')
-                            ->placeholder('e.g., Explosivité & Réaction'),
+                            ->placeholder(__('filament.placeholders.gain_prediction')),
                         Forms\Components\TextInput::make('injury_risk')
-                            ->placeholder('e.g., Très Élevé'),
+                            ->placeholder(__('filament.placeholders.injury_risk')),
                     ])
                     ->columns(2)
                     ->collapsible(),

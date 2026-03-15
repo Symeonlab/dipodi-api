@@ -168,28 +168,28 @@ class PostResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('featured_image')
-                    ->label('Image')
+                    ->label(__('filament.sections.featured_image'))
                     ->circular(),
                 Tables\Columns\TextColumn::make('title_en')
-                    ->label('Title')
+                    ->label(__('filament.labels.title'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
                     ->limit(40),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('Author')
+                    ->label(__('filament.labels.author'))
                     ->badge()
                     ->color('gray')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_published')
-                    ->label('Status')
+                    ->label(__('filament.labels.status'))
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-clock')
                     ->trueColor('success')
                     ->falseColor('warning'),
                 Tables\Columns\TextColumn::make('translations')
-                    ->label('Languages')
+                    ->label(__('filament.labels.languages'))
                     ->getStateUsing(function (Post $record): string {
                         $langs = [];
                         if ($record->title_en) $langs[] = 'EN';
@@ -200,17 +200,17 @@ class PostResource extends Resource
                     ->badge()
                     ->color('info'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(__('filament.labels.created'))
                     ->dateTime('M j, Y')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_published')
-                    ->label('Published')
-                    ->placeholder('All Posts')
-                    ->trueLabel('Published')
-                    ->falseLabel('Drafts'),
+                    ->label(__('filament.filters.published'))
+                    ->placeholder(__('filament.filters.all_posts'))
+                    ->trueLabel(__('filament.labels.published'))
+                    ->falseLabel(__('filament.filters.drafts')),
                 Tables\Filters\SelectFilter::make('user')
                     ->relationship('user', 'name')
                     ->searchable()
@@ -218,21 +218,21 @@ class PostResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('publish')
-                    ->label('Publish')
+                    ->label(__('filament.actions.publish'))
                     ->icon('heroicon-o-check')
                     ->color('success')
                     ->action(fn (Post $record) => $record->update(['is_published' => true]))
                     ->visible(fn (Post $record): bool => !$record->is_published)
                     ->requiresConfirmation(),
                 Tables\Actions\Action::make('unpublish')
-                    ->label('Unpublish')
+                    ->label(__('filament.actions.unpublish'))
                     ->icon('heroicon-o-x-mark')
                     ->color('warning')
                     ->action(fn (Post $record) => $record->update(['is_published' => false]))
                     ->visible(fn (Post $record): bool => $record->is_published)
                     ->requiresConfirmation(),
                 Tables\Actions\Action::make('duplicate')
-                    ->label('Duplicate')
+                    ->label(__('filament.actions.duplicate'))
                     ->icon('heroicon-o-document-duplicate')
                     ->color('gray')
                     ->action(function (Post $record) {
@@ -255,19 +255,19 @@ class PostResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('publish')
-                        ->label('Publish Selected')
+                        ->label(__('filament.actions.publish_selected'))
                         ->icon('heroicon-o-check')
                         ->action(fn ($records) => $records->each->update(['is_published' => true]))
                         ->requiresConfirmation()
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('unpublish')
-                        ->label('Unpublish Selected')
+                        ->label(__('filament.actions.unpublish_selected'))
                         ->icon('heroicon-o-x-mark')
                         ->action(fn ($records) => $records->each->update(['is_published' => false]))
                         ->requiresConfirmation()
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\BulkAction::make('export')
-                        ->label('Export Selected')
+                        ->label(__('filament.actions.export_selected'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->action(function (\Illuminate\Support\Collection $records) {
                             $csv = "Title (EN),Title (FR),Author,Status,Slug,Created\n";
@@ -282,8 +282,8 @@ class PostResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('No posts yet')
-            ->emptyStateDescription('Create your first post to engage with users.')
+            ->emptyStateHeading(__('filament.empty.posts'))
+            ->emptyStateDescription(__('filament.empty.posts_desc'))
             ->emptyStateIcon('heroicon-o-newspaper');
     }
 
@@ -297,7 +297,7 @@ class PostResource extends Resource
                             ->label('')
                             ->height(200),
                     ]),
-                Infolists\Components\Tabs::make('Content')
+                Infolists\Components\Tabs::make(__('filament.labels.content'))
                     ->tabs([
                         Infolists\Components\Tabs\Tab::make(__('filament.labels.english'))
                             ->schema([
