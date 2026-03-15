@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Root — redirect to admin or return simple status
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json(['status' => 'ok', 'app' => 'Dipoddi API', 'version' => app()->version()], 200);
 });
 
 // Health check endpoint for Sliplane / load balancer

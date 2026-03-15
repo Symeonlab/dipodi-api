@@ -62,7 +62,7 @@ COPY . /var/www
 # Now run the post-install scripts (package:discover, filament:upgrade)
 RUN composer run-script post-autoload-dump --no-interaction 2>/dev/null || true
 
-# Remove the dummy .env (real one is provided at runtime via env vars)
+# Remove the dummy .env (real one is generated at runtime from env vars)
 RUN rm -f .env
 
 # Copy Nginx configuration
@@ -76,6 +76,10 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Copy PHP production config
 COPY docker/php/production.ini /usr/local/etc/php/conf.d/production.ini
 
+# Copy and set startup script
+COPY docker/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
 # Set permissions for Laravel
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage \
@@ -83,7 +87,7 @@ RUN chown -R www-data:www-data /var/www \
     && mkdir -p /var/www/storage/logs \
     && mkdir -p /var/www/storage/framework/sessions \
     && mkdir -p /var/www/storage/framework/views \
-    && mkdir -p /var/www/storage/framework/cache
+    && mkdir -p /var/www/storage/framework/cache/data
 
 # Create nginx and supervisor directories
 RUN mkdir -p /run/nginx /var/log/supervisor \
@@ -93,5 +97,5 @@ RUN mkdir -p /run/nginx /var/log/supervisor \
 # Expose HTTP port
 EXPOSE 80
 
-# Start Nginx + PHP-FPM via Supervisord
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Start with the startup script (generates .env, caches config, then starts supervisord)
+CMD ["/usr/local/bin/start.sh"]
