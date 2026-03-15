@@ -44,8 +44,8 @@ class PostResource extends Resource
     public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
     {
         return [
-            'Author' => $record->user?->name ?? 'Unknown',
-            'Status' => $record->is_published ? 'Published' : 'Draft',
+            __('filament.labels.author') => $record->user?->name ?? 'Unknown',
+            __('filament.labels.status') => $record->is_published ? __('filament.labels.published') : __('filament.labels.draft'),
         ];
     }
 
@@ -66,51 +66,51 @@ class PostResource extends Resource
             ->schema([
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('Post Content')
-                            ->description('Write your post in multiple languages')
+                        Forms\Components\Section::make(__('filament.sections.post_content'))
+                            ->description(__('filament.sections.post_content_desc'))
                             ->icon('heroicon-o-document-text')
                             ->schema([
-                                Forms\Components\Tabs::make('Translations')
+                                Forms\Components\Tabs::make(__('filament.sections.translations'))
                                     ->tabs([
-                                        Forms\Components\Tabs\Tab::make('English')
+                                        Forms\Components\Tabs\Tab::make(__('filament.labels.english'))
                                             ->icon('heroicon-o-language')
                                             ->schema([
                                                 Forms\Components\TextInput::make('title_en')
-                                                    ->label('Title')
+                                                    ->label(__('filament.labels.title'))
                                                     ->maxLength(255)
                                                     ->live(onBlur: true)
                                                     ->afterStateUpdated(fn ($state, $set) => $set('slug', Str::slug($state))),
                                                 Forms\Components\RichEditor::make('content_en')
-                                                    ->label('Content')
+                                                    ->label(__('filament.labels.content'))
                                                     ->toolbarButtons([
                                                         'bold', 'italic', 'underline', 'strike',
                                                         'h2', 'h3', 'bulletList', 'orderedList',
                                                         'link', 'blockquote', 'redo', 'undo',
                                                     ]),
                                             ]),
-                                        Forms\Components\Tabs\Tab::make('Francais')
+                                        Forms\Components\Tabs\Tab::make(__('filament.labels.french'))
                                             ->icon('heroicon-o-language')
                                             ->schema([
                                                 Forms\Components\TextInput::make('title_fr')
-                                                    ->label('Titre')
+                                                    ->label(__('filament.labels.titre'))
                                                     ->maxLength(255),
                                                 Forms\Components\RichEditor::make('content_fr')
-                                                    ->label('Contenu')
+                                                    ->label(__('filament.labels.contenu'))
                                                     ->toolbarButtons([
                                                         'bold', 'italic', 'underline', 'strike',
                                                         'h2', 'h3', 'bulletList', 'orderedList',
                                                         'link', 'blockquote', 'redo', 'undo',
                                                     ]),
                                             ]),
-                                        Forms\Components\Tabs\Tab::make('Arabic')
+                                        Forms\Components\Tabs\Tab::make(__('filament.labels.arabic'))
                                             ->icon('heroicon-o-language')
                                             ->schema([
                                                 Forms\Components\TextInput::make('title_ar')
-                                                    ->label('Title')
+                                                    ->label(__('filament.labels.title'))
                                                     ->maxLength(255)
                                                     ->extraAttributes(['dir' => 'rtl']),
                                                 Forms\Components\RichEditor::make('content_ar')
-                                                    ->label('Content')
+                                                    ->label(__('filament.labels.content'))
                                                     ->extraAttributes(['dir' => 'rtl'])
                                                     ->toolbarButtons([
                                                         'bold', 'italic', 'underline', 'strike',
@@ -126,11 +126,11 @@ class PostResource extends Resource
 
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('Settings')
+                        Forms\Components\Section::make(__('filament.sections.settings'))
                             ->icon('heroicon-o-cog-6-tooth')
                             ->schema([
                                 Forms\Components\Select::make('user_id')
-                                    ->label('Author')
+                                    ->label(__('filament.labels.author'))
                                     ->relationship('user', 'name')
                                     ->searchable()
                                     ->preload()
@@ -140,14 +140,14 @@ class PostResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->unique(ignoreRecord: true)
-                                    ->helperText('Auto-generated from title'),
+                                    ->helperText(__('filament.helper.slug_auto')),
                                 Forms\Components\Toggle::make('is_published')
-                                    ->label('Published')
+                                    ->label(__('filament.labels.published'))
                                     ->default(false)
-                                    ->helperText('Make this post visible to users'),
+                                    ->helperText(__('filament.helper.make_visible')),
                             ]),
 
-                        Forms\Components\Section::make('Featured Image')
+                        Forms\Components\Section::make(__('filament.sections.featured_image'))
                             ->icon('heroicon-o-photo')
                             ->schema([
                                 Forms\Components\FileUpload::make('featured_image')
@@ -299,35 +299,35 @@ class PostResource extends Resource
                     ]),
                 Infolists\Components\Tabs::make('Content')
                     ->tabs([
-                        Infolists\Components\Tabs\Tab::make('English')
+                        Infolists\Components\Tabs\Tab::make(__('filament.labels.english'))
                             ->schema([
                                 Infolists\Components\TextEntry::make('title_en')
-                                    ->label('Title')
+                                    ->label(__('filament.labels.title'))
                                     ->size('lg')
                                     ->weight('bold'),
                                 Infolists\Components\TextEntry::make('content_en')
-                                    ->label('Content')
+                                    ->label(__('filament.labels.content'))
                                     ->html(),
                             ]),
-                        Infolists\Components\Tabs\Tab::make('Francais')
+                        Infolists\Components\Tabs\Tab::make(__('filament.labels.french'))
                             ->schema([
                                 Infolists\Components\TextEntry::make('title_fr')
-                                    ->label('Titre')
+                                    ->label(__('filament.labels.titre'))
                                     ->size('lg')
                                     ->weight('bold'),
                                 Infolists\Components\TextEntry::make('content_fr')
-                                    ->label('Contenu')
+                                    ->label(__('filament.labels.contenu'))
                                     ->html(),
                             ]),
-                        Infolists\Components\Tabs\Tab::make('Arabic')
+                        Infolists\Components\Tabs\Tab::make(__('filament.labels.arabic'))
                             ->schema([
                                 Infolists\Components\TextEntry::make('title_ar')
-                                    ->label('Title')
+                                    ->label(__('filament.labels.title'))
                                     ->size('lg')
                                     ->weight('bold')
                                     ->extraAttributes(['dir' => 'rtl']),
                                 Infolists\Components\TextEntry::make('content_ar')
-                                    ->label('Content')
+                                    ->label(__('filament.labels.content'))
                                     ->html()
                                     ->extraAttributes(['dir' => 'rtl']),
                             ]),

@@ -63,19 +63,19 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Tabs::make('User Details')
+                Forms\Components\Tabs::make(__('filament.sections.account'))
                     ->tabs([
-                        Forms\Components\Tabs\Tab::make('Account')
+                        Forms\Components\Tabs\Tab::make(__('filament.sections.account'))
                             ->icon('heroicon-o-user-circle')
                             ->schema([
                                 Forms\Components\TextInput::make('name')->required(),
                                 Forms\Components\TextInput::make('email')->email()->required(),
                                 Forms\Components\Select::make('role')
                                     ->options([
-                                        'admin' => 'Admin',
-                                        'coach' => 'Coach',
-                                        'manager' => 'Manager',
-                                        'user' => 'User',
+                                        'admin' => __('filament.roles.admin'),
+                                        'coach' => __('filament.roles.coach'),
+                                        'manager' => __('filament.roles.manager'),
+                                        'user' => __('filament.roles.user'),
                                     ])
                                     ->required()->default('user'),
                                 Forms\Components\TextInput::make('password')
@@ -86,35 +86,35 @@ class UserResource extends Resource
                                     ->columnSpanFull(),
 
                                 // --- FIX: We must use relationship() on a Section ---
-                                Forms\Components\Section::make('Profile Status')
+                                Forms\Components\Section::make(__('filament.sections.profile_status'))
                                     ->relationship('profile')
                                     ->schema([
                                         Forms\Components\Toggle::make('is_onboarding_complete')
-                                            ->label('Onboarding Complete')
-                                            ->helperText('If this is off, the user will be forced into the onboarding flow on the app.'),
+                                            ->label(__('filament.labels.onboarding_complete'))
+                                            ->helperText(__('filament.helper.onboarding_complete')),
                                     ])
                                 // --- END FIX ---
                             ])->columns(2),
 
-                        Forms\Components\Tabs\Tab::make('Sport Profile')
+                        Forms\Components\Tabs\Tab::make(__('filament.sections.sport_profile'))
                             ->icon('heroicon-o-shield-check')
                             ->schema([
                                 // --- FIX: We wrap the fields in a Section ---
-                                Forms\Components\Section::make('Sport Details')
+                                Forms\Components\Section::make(__('filament.sections.sport_details'))
                                     ->relationship('profile') // <-- The relationship call is moved here
                                     ->schema([
                                         Forms\Components\Select::make('discipline')
                                             ->options(fn() => \App\Models\OnboardingOption::where('type', 'discipline')->pluck('name_fr', 'key'))
                                             ->searchable(),
                                         Forms\Components\Select::make('position')
-                                            ->label('Player Position')
+                                            ->label(__('filament.labels.player_position'))
                                             ->options(fn() => \App\Models\PlayerProfile::all()->pluck('name', 'name'))
                                             ->searchable(),
-                                        Forms\Components\Toggle::make('in_club')->label('In a Club?'),
+                                        Forms\Components\Toggle::make('in_club')->label(__('filament.labels.in_club')),
                                         Forms\Components\Select::make('match_day')->options([
-                                            'AUCUN' => 'Aucun', 'LUNDI' => 'Lundi', 'MARDI' => 'Mardi', 'MERCREDI' => 'Mercredi', 'JEUDI' => 'Jeudi', 'VENDREDI' => 'Vendredi', 'SAMEDI' => 'Samedi', 'DIMANCHE' => 'Dimanche'
+                                            'AUCUN' => __('filament.days.none'), 'LUNDI' => __('filament.days.monday'), 'MARDI' => __('filament.days.tuesday'), 'MERCREDI' => __('filament.days.wednesday'), 'JEUDI' => __('filament.days.thursday'), 'VENDREDI' => __('filament.days.friday'), 'SAMEDI' => __('filament.days.saturday'), 'DIMANCHE' => __('filament.days.sunday')
                                         ]),
-                                        Forms\Components\TagsInput::make('training_days')->label('Training Days'),
+                                        Forms\Components\TagsInput::make('training_days')->label(__('filament.labels.training_days')),
                                         Forms\Components\Select::make('level')
                                             ->options(fn() => \App\Models\OnboardingOption::where('type', 'level')->pluck('name_fr', 'key')),
                                         Forms\Components\Select::make('training_location')
@@ -122,18 +122,18 @@ class UserResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Personal & Nutrition')
+                        Forms\Components\Tabs\Tab::make(__('filament.sections.personal_nutrition'))
                             ->icon('heroicon-o-heart')
                             ->schema([
                                 // --- FIX: We wrap the fields in a Section ---
-                                Forms\Components\Section::make('Personal & Nutrition Details')
+                                Forms\Components\Section::make(__('filament.sections.personal_nutrition_details'))
                                     ->relationship('profile') // <-- The relationship call is moved here
                                     ->schema([
                                         Forms\Components\TextInput::make('age')->numeric(),
                                         Forms\Components\TextInput::make('weight')->numeric()->suffix('kg'),
                                         Forms\Components\TextInput::make('height')->numeric()->suffix('cm'),
                                         Forms\Components\TextInput::make('ideal_weight')->numeric()->suffix('kg'),
-                                        Forms\Components\Select::make('gender')->options(['HOMME' => 'Homme', 'FEMME' => 'Femme']),
+                                        Forms\Components\Select::make('gender')->options(['HOMME' => __('filament.gender.male'), 'FEMME' => __('filament.gender.female')]),
                                         Forms\Components\Select::make('goal')
                                             ->options(fn() => \App\Models\OnboardingOption::where('type', 'goal')->pluck('name_fr', 'key')),
                                         Forms\Components\Select::make('morphology')
@@ -144,11 +144,11 @@ class UserResource extends Resource
                                     ])->columns(2),
                             ]),
 
-                        Forms\Components\Tabs\Tab::make('Medical')
+                        Forms\Components\Tabs\Tab::make(__('filament.sections.medical'))
                             ->icon('heroicon-o-clipboard-document-list')
                             ->schema([
                                 // --- FIX: We wrap the fields in a Section ---
-                                Forms\Components\Section::make('Medical Details')
+                                Forms\Components\Section::make(__('filament.sections.medical_details'))
                                     ->relationship('profile') // <-- The relationship call is moved here
                                     ->schema([
                                         Forms\Components\Toggle::make('has_injury'),
@@ -157,7 +157,7 @@ class UserResource extends Resource
                                         Forms\Components\Toggle::make('has_diabetes'),
                                         Forms\Components\Toggle::make('takes_medication'),
                                         Forms\Components\Select::make('hormonal_issues')->options([
-                                            'OUI' => 'Oui', 'NON' => 'Non', 'JE NE SAIS PAS' => 'Je ne sais pas'
+                                            'OUI' => __('filament.hormonal.yes'), 'NON' => __('filament.hormonal.no'), 'JE NE SAIS PAS' => __('filament.hormonal.unknown')
                                         ]),
                                         Forms\Components\TagsInput::make('family_history')->columnSpanFull(),
                                         Forms\Components\TagsInput::make('medical_history')->columnSpanFull(),
@@ -181,7 +181,7 @@ class UserResource extends Resource
                     ->sortable()
                     ->icon('heroicon-o-envelope')
                     ->copyable()
-                    ->copyMessage('Email copied'),
+                    ->copyMessage(__('filament.actions.email_copied')),
                 Tables\Columns\TextColumn::make('role')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -200,29 +200,29 @@ class UserResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\IconColumn::make('profile.is_onboarding_complete')
-                    ->label('Onboarded')
+                    ->label(__('filament.labels.onboarded'))
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger'),
                 Tables\Columns\TextColumn::make('profile.discipline')
-                    ->label('Discipline')
+                    ->label(__('filament.labels.discipline'))
                     ->badge()
                     ->color('info')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('profile.position')
-                    ->label('Position')
+                    ->label(__('filament.labels.position'))
                     ->searchable()
                     ->badge()
                     ->color('purple'),
                 Tables\Columns\TextColumn::make('profile.goal')
-                    ->label('Goal')
+                    ->label(__('filament.labels.goal'))
                     ->badge()
                     ->color('warning')
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('profile.gender')
-                    ->label('Gender')
+                    ->label(__('filament.labels.gender'))
                     ->badge()
                     ->color(fn (?string $state): string => match ($state) {
                         'HOMME' => 'info',
@@ -231,7 +231,7 @@ class UserResource extends Resource
                     })
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Joined')
+                    ->label(__('filament.labels.joined'))
                     ->dateTime('M d, Y')
                     ->sortable()
                     ->since()
@@ -241,24 +241,24 @@ class UserResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('role')
                     ->options([
-                        'admin' => 'Admin',
-                        'coach' => 'Coach',
-                        'manager' => 'Manager',
-                        'user' => 'User',
+                        'admin' => __('filament.roles.admin'),
+                        'coach' => __('filament.roles.coach'),
+                        'manager' => __('filament.roles.manager'),
+                        'user' => __('filament.roles.user'),
                     ])
                     ->multiple()
                     ->preload(),
                 Tables\Filters\TernaryFilter::make('onboarded')
-                    ->label('Onboarding Status')
+                    ->label(__('filament.filters.onboarding_status'))
                     ->queries(
                         true: fn (Builder $query) => $query->whereHas('profile', fn ($q) => $q->where('is_onboarding_complete', true)),
                         false: fn (Builder $query) => $query->whereHas('profile', fn ($q) => $q->where('is_onboarding_complete', false)),
                         blank: fn (Builder $query) => $query,
                     )
-                    ->trueLabel('Completed')
-                    ->falseLabel('Not Completed'),
+                    ->trueLabel(__('filament.filters.completed'))
+                    ->falseLabel(__('filament.filters.not_completed')),
                 Tables\Filters\SelectFilter::make('discipline')
-                    ->label('Discipline')
+                    ->label(__('filament.labels.discipline'))
                     ->options(fn () => \App\Models\UserProfile::query()
                         ->whereNotNull('discipline')
                         ->distinct()
@@ -271,10 +271,10 @@ class UserResource extends Resource
                     ->searchable()
                     ->preload(),
                 Tables\Filters\SelectFilter::make('gender')
-                    ->label('Gender')
+                    ->label(__('filament.labels.gender'))
                     ->options([
-                        'HOMME' => 'Homme',
-                        'FEMME' => 'Femme',
+                        'HOMME' => __('filament.gender.male'),
+                        'FEMME' => __('filament.gender.female'),
                     ])
                     ->query(fn (Builder $query, array $data): Builder =>
                         $data['value'] ? $query->whereHas('profile', fn ($q) => $q->where('gender', $data['value'])) : $query
@@ -282,9 +282,9 @@ class UserResource extends Resource
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('joined_from')
-                            ->label('Joined From'),
+                            ->label(__('filament.filters.joined_from')),
                         Forms\Components\DatePicker::make('joined_until')
-                            ->label('Joined Until'),
+                            ->label(__('filament.filters.joined_until')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -308,8 +308,8 @@ class UserResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('No users found')
-            ->emptyStateDescription('Users will appear here once they register.')
+            ->emptyStateHeading(__('filament.empty.users'))
+            ->emptyStateDescription(__('filament.empty.users_desc'))
             ->emptyStateIcon('heroicon-o-users');
     }
 
@@ -317,7 +317,7 @@ class UserResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Account Information')
+                Infolists\Components\Section::make(__('filament.sections.account_info'))
                     ->icon('heroicon-o-user-circle')
                     ->schema([
                         Infolists\Components\TextEntry::make('name')
@@ -336,20 +336,20 @@ class UserResource extends Resource
                                 default => 'gray',
                             }),
                         Infolists\Components\TextEntry::make('created_at')
-                            ->label('Member Since')
+                            ->label(__('filament.labels.member_since'))
                             ->dateTime('F j, Y'),
                     ])
                     ->columns(2),
 
-                Infolists\Components\Section::make('Profile Status')
+                Infolists\Components\Section::make(__('filament.sections.profile_status'))
                     ->icon('heroicon-o-check-badge')
                     ->schema([
                         Infolists\Components\IconEntry::make('profile.is_onboarding_complete')
-                            ->label('Onboarding Complete')
+                            ->label(__('filament.labels.onboarding_complete'))
                             ->boolean(),
                     ]),
 
-                Infolists\Components\Section::make('Sport Profile')
+                Infolists\Components\Section::make(__('filament.sections.sport_profile'))
                     ->icon('heroicon-o-trophy')
                     ->schema([
                         Infolists\Components\TextEntry::make('profile.discipline')
@@ -361,7 +361,7 @@ class UserResource extends Resource
                         Infolists\Components\TextEntry::make('profile.level')
                             ->badge(),
                         Infolists\Components\IconEntry::make('profile.in_club')
-                            ->label('In Club')
+                            ->label(__('filament.labels.in_club_label'))
                             ->boolean(),
                         Infolists\Components\TextEntry::make('profile.match_day')
                             ->badge()
@@ -376,7 +376,7 @@ class UserResource extends Resource
                     ->columns(3)
                     ->collapsible(),
 
-                Infolists\Components\Section::make('Personal & Nutrition')
+                Infolists\Components\Section::make(__('filament.sections.personal_nutrition'))
                     ->icon('heroicon-o-heart')
                     ->schema([
                         Infolists\Components\TextEntry::make('profile.age')
@@ -396,26 +396,26 @@ class UserResource extends Resource
                         Infolists\Components\TextEntry::make('profile.morphology')
                             ->badge(),
                         Infolists\Components\IconEntry::make('profile.is_vegetarian')
-                            ->label('Vegetarian')
+                            ->label(__('filament.labels.vegetarian'))
                             ->boolean(),
                     ])
                     ->columns(4)
                     ->collapsible(),
 
-                Infolists\Components\Section::make('Medical Information')
+                Infolists\Components\Section::make(__('filament.sections.medical_info'))
                     ->icon('heroicon-o-clipboard-document-list')
                     ->schema([
                         Infolists\Components\IconEntry::make('profile.has_injury')
-                            ->label('Has Injury')
+                            ->label(__('filament.labels.has_injury'))
                             ->boolean(),
                         Infolists\Components\TextEntry::make('profile.injury_location')
                             ->badge()
                             ->color('danger'),
                         Infolists\Components\IconEntry::make('profile.has_diabetes')
-                            ->label('Has Diabetes')
+                            ->label(__('filament.labels.has_diabetes'))
                             ->boolean(),
                         Infolists\Components\IconEntry::make('profile.takes_medication')
-                            ->label('Takes Medication')
+                            ->label(__('filament.labels.takes_medication'))
                             ->boolean(),
                         Infolists\Components\TextEntry::make('profile.hormonal_issues')
                             ->badge(),
@@ -429,21 +429,21 @@ class UserResource extends Resource
                     ->columns(4)
                     ->collapsible(),
 
-                Infolists\Components\Section::make('Feedback Summary')
+                Infolists\Components\Section::make(__('filament.sections.feedback_summary'))
                     ->icon('heroicon-o-clipboard-document-check')
                     ->schema([
                         Infolists\Components\TextEntry::make('feedback_total_sessions')
-                            ->label('Total Sessions')
+                            ->label(__('filament.labels.total_sessions'))
                             ->state(fn ($record) => $record->feedbackSessions()->count())
                             ->badge()
                             ->color('info'),
                         Infolists\Components\TextEntry::make('feedback_completed_sessions')
-                            ->label('Completed')
+                            ->label(__('filament.labels.completed_sessions'))
                             ->state(fn ($record) => $record->feedbackSessions()->where('status', 'completed')->count())
                             ->badge()
                             ->color('success'),
                         Infolists\Components\TextEntry::make('feedback_average_score')
-                            ->label('Average Score')
+                            ->label(__('filament.labels.average_score'))
                             ->state(function ($record) {
                                 $avg = $record->feedbackSessions()
                                     ->where('status', 'completed')
@@ -459,7 +459,7 @@ class UserResource extends Resource
                                 default => 'danger',
                             }),
                         Infolists\Components\TextEntry::make('feedback_total_answers')
-                            ->label('Total Answers')
+                            ->label(__('filament.labels.total_answers'))
                             ->state(fn ($record) => $record->feedbackAnswers()->count())
                             ->badge()
                             ->color('purple'),
@@ -467,21 +467,21 @@ class UserResource extends Resource
                     ->columns(4)
                     ->collapsible(),
 
-                Infolists\Components\Section::make('Health Assessment Summary')
+                Infolists\Components\Section::make(__('filament.sections.health_summary'))
                     ->icon('heroicon-o-heart')
                     ->schema([
                         Infolists\Components\TextEntry::make('health_total_sessions')
-                            ->label('Total Assessments')
+                            ->label(__('filament.labels.total_assessments'))
                             ->state(fn ($record) => $record->healthAssessmentSessions()->count())
                             ->badge()
                             ->color('info'),
                         Infolists\Components\TextEntry::make('health_completed_sessions')
-                            ->label('Completed')
+                            ->label(__('filament.labels.completed_sessions'))
                             ->state(fn ($record) => $record->healthAssessmentSessions()->where('status', 'completed')->count())
                             ->badge()
                             ->color('success'),
                         Infolists\Components\TextEntry::make('health_concerns_count')
-                            ->label('Total Concerns')
+                            ->label(__('filament.labels.total_concerns'))
                             ->state(function ($record) {
                                 return $record->healthAssessmentAnswers()
                                     ->whereIn('answer_value', ['oui', 'yes', '1', 'true'])
@@ -490,7 +490,7 @@ class UserResource extends Resource
                             ->badge()
                             ->color(fn ($state) => $state > 20 ? 'danger' : ($state > 10 ? 'warning' : 'success')),
                         Infolists\Components\TextEntry::make('health_critical_concerns')
-                            ->label('Critical Concerns')
+                            ->label(__('filament.labels.critical_concerns'))
                             ->state(function ($record) {
                                 return $record->healthAssessmentAnswers()
                                     ->whereIn('answer_value', ['oui', 'yes', '1', 'true'])

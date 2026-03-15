@@ -49,12 +49,12 @@ class WorkoutThemeRuleResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Theme Association')
-                    ->description('Link this rule to a workout theme')
+                Forms\Components\Section::make(__('filament.sections.theme_association'))
+                    ->description(__('filament.sections.theme_association_desc'))
                     ->icon('heroicon-o-link')
                     ->schema([
                         Forms\Components\Select::make('workout_theme_id')
-                            ->label('Workout Theme')
+                            ->label(__('filament.labels.workout_theme'))
                             ->relationship('theme', 'name')
                             ->required()
                             ->native(false)
@@ -65,90 +65,90 @@ class WorkoutThemeRuleResource extends Resource
                                     ->required(),
                                 Forms\Components\Select::make('type')
                                     ->options([
-                                        'RENFORCEMENT' => 'Renforcement',
-                                        'PUISSANCE' => 'Puissance',
-                                        'ENDURANCE' => 'Endurance',
-                                        'HYPERTROPHIE' => 'Hypertrophie',
-                                        'EXPLOSIVITE' => 'Explosivite',
+                                        'RENFORCEMENT' => __('filament.theme_types.renforcement'),
+                                        'PUISSANCE' => __('filament.theme_types.puissance'),
+                                        'ENDURANCE' => __('filament.theme_types.endurance'),
+                                        'HYPERTROPHIE' => __('filament.theme_types.hypertrophie'),
+                                        'EXPLOSIVITE' => __('filament.theme_types.explosivite'),
                                     ])
                                     ->required(),
                             ]),
                     ]),
 
-                Forms\Components\Section::make('Exercise Parameters')
-                    ->description('Define the workout structure')
+                Forms\Components\Section::make(__('filament.sections.exercise_parameters'))
+                    ->description(__('filament.sections.exercise_parameters_desc'))
                     ->icon('heroicon-o-chart-bar')
                     ->schema([
                         Forms\Components\TextInput::make('exercise_count')
-                            ->label('Exercise Count')
+                            ->label(__('filament.labels.exercise_count'))
                             ->required()
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(20)
-                            ->placeholder('e.g., 4, 5, 6')
-                            ->helperText('Number of exercises per session'),
+                            ->placeholder(__('filament.placeholders.exercise_count'))
+                            ->helperText(__('filament.helper.exercise_count')),
                         Forms\Components\TextInput::make('sets')
-                            ->label('Sets')
+                            ->label(__('filament.labels.sets'))
                             ->required()
-                            ->placeholder('e.g., 3, 4, 5')
-                            ->helperText('Number of sets per exercise'),
+                            ->placeholder(__('filament.placeholders.sets'))
+                            ->helperText(__('filament.helper.sets')),
                         Forms\Components\TextInput::make('reps')
-                            ->label('Reps')
+                            ->label(__('filament.labels.reps'))
                             ->required()
-                            ->placeholder('e.g., 8-12, 15, 20')
-                            ->helperText('Repetitions per set'),
+                            ->placeholder(__('filament.placeholders.reps'))
+                            ->helperText(__('filament.helper.reps')),
                     ])
                     ->columns(3),
 
-                Forms\Components\Section::make('Recovery & Load')
-                    ->description('Rest periods and intensity settings')
+                Forms\Components\Section::make(__('filament.sections.recovery_load'))
+                    ->description(__('filament.sections.recovery_load_desc'))
                     ->icon('heroicon-o-clock')
                     ->schema([
                         Forms\Components\TextInput::make('recovery_time')
-                            ->label('Recovery Time')
+                            ->label(__('filament.labels.recovery_time'))
                             ->required()
-                            ->placeholder('e.g., 60s, 90s, 2min')
-                            ->helperText('Rest between sets'),
+                            ->placeholder(__('filament.placeholders.recovery'))
+                            ->helperText(__('filament.helper.recovery')),
                         Forms\Components\Select::make('load_type')
-                            ->label('Load Type')
+                            ->label(__('filament.labels.load_type'))
                             ->options([
-                                'LEGER' => 'Leger (Light)',
-                                'MODERE' => 'Modere (Moderate)',
-                                'LOURD' => 'Lourd (Heavy)',
-                                'MAX' => 'Maximum',
-                                'PROGRESSIF' => 'Progressif',
-                                'DEGRESSIF' => 'Degressif',
+                                'LEGER' => __('filament.load_types.leger'),
+                                'MODERE' => __('filament.load_types.modere'),
+                                'LOURD' => __('filament.load_types.lourd'),
+                                'MAX' => __('filament.load_types.max'),
+                                'PROGRESSIF' => __('filament.load_types.progressif'),
+                                'DEGRESSIF' => __('filament.load_types.degressif'),
                             ])
                             ->required()
                             ->native(false),
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Intensity & Performance')
-                    ->description('Zone, RPE, METs, and load parameters')
+                Forms\Components\Section::make(__('filament.sections.intensity_performance'))
+                    ->description(__('filament.sections.intensity_performance_desc'))
                     ->icon('heroicon-o-signal')
                     ->schema([
                         Forms\Components\TextInput::make('mets')
-                            ->label('METs')
+                            ->label(__('filament.labels.mets'))
                             ->numeric()
                             ->step(0.1),
                         Forms\Components\TextInput::make('duration')
-                            ->placeholder('e.g., 90-120 min'),
+                            ->placeholder(__('filament.placeholders.duration')),
                         Forms\Components\TextInput::make('charges')
                             ->placeholder('e.g., 85-100%'),
                         Forms\Components\TextInput::make('speed_intensity')
-                            ->label('Speed / Intensity')
-                            ->placeholder('e.g., Lente-contrôlée'),
+                            ->label(__('filament.labels.speed_intensity'))
+                            ->placeholder(__('filament.placeholders.speed')),
                         Forms\Components\TextInput::make('rpe')
-                            ->label('RPE (1-10)')
+                            ->label(__('filament.labels.rpe'))
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(10),
                         Forms\Components\TextInput::make('load_ua')
-                            ->label('Load (u.a.)')
+                            ->label(__('filament.labels.load_ua'))
                             ->numeric(),
                         Forms\Components\TextInput::make('impact')
-                            ->label('Impact (1-5)')
+                            ->label(__('filament.labels.impact'))
                             ->numeric()
                             ->minValue(1)
                             ->maxValue(5),
@@ -156,29 +156,29 @@ class WorkoutThemeRuleResource extends Resource
                     ->columns(4)
                     ->collapsible(),
 
-                Forms\Components\Section::make('Recovery & Supercompensation')
-                    ->description('Freshness windows and recovery data')
+                Forms\Components\Section::make(__('filament.sections.recovery_supercomp'))
+                    ->description(__('filament.sections.recovery_supercomp_desc'))
                     ->icon('heroicon-o-arrow-trending-up')
                     ->schema([
                         Forms\Components\TextInput::make('sleep_requirement')
-                            ->placeholder('e.g., 9h'),
+                            ->placeholder(__('filament.placeholders.sleep_duration')),
                         Forms\Components\TextInput::make('hydration')
                             ->placeholder('e.g., 1.00L'),
                         Forms\Components\TextInput::make('freshness_24h')
-                            ->label('Freshness H+24')
+                            ->label(__('filament.labels.freshness_24h'))
                             ->numeric()
                             ->step(0.01),
                         Forms\Components\TextInput::make('freshness_48h')
-                            ->label('Freshness H+48')
+                            ->label(__('filament.labels.freshness_48h'))
                             ->numeric()
                             ->step(0.01),
                         Forms\Components\TextInput::make('freshness_72h')
-                            ->label('Freshness H+72')
+                            ->label(__('filament.labels.freshness_72h'))
                             ->numeric()
                             ->step(0.01),
                         Forms\Components\TextInput::make('supercomp_window')
-                            ->label('Supercomp Window')
-                            ->placeholder('e.g., 48h'),
+                            ->label(__('filament.labels.supercomp_window'))
+                            ->placeholder(__('filament.placeholders.supercomp')),
                         Forms\Components\TextInput::make('elastic_recoil')
                             ->placeholder('e.g., Diminue'),
                         Forms\Components\TextInput::make('cfa')
@@ -188,7 +188,7 @@ class WorkoutThemeRuleResource extends Resource
                     ->columns(4)
                     ->collapsible(),
 
-                Forms\Components\Section::make('Alerts & Predictions')
+                Forms\Components\Section::make(__('filament.sections.alerts_predictions'))
                     ->icon('heroicon-o-exclamation-triangle')
                     ->schema([
                         Forms\Components\TextInput::make('daily_alert_threshold')
@@ -210,13 +210,13 @@ class WorkoutThemeRuleResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('theme.name')
-                    ->label('Theme')
+                    ->label(__('filament.sections.theme'))
                     ->badge()
                     ->color('info')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('theme.type')
-                    ->label('Type')
+                    ->label(__('filament.labels.type'))
                     ->badge()
                     ->color(fn ($state): string => match ($state) {
                         'RENFORCEMENT' => 'success',
@@ -227,25 +227,25 @@ class WorkoutThemeRuleResource extends Resource
                         default => 'gray',
                     }),
                 Tables\Columns\TextColumn::make('exercise_count')
-                    ->label('Exercises')
+                    ->label(__('filament.labels.exercises'))
                     ->alignCenter()
                     ->badge()
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('sets')
-                    ->label('Sets')
+                    ->label(__('filament.labels.sets'))
                     ->alignCenter()
                     ->badge()
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('reps')
-                    ->label('Reps')
+                    ->label(__('filament.labels.reps'))
                     ->alignCenter()
                     ->badge()
                     ->color('gray'),
                 Tables\Columns\TextColumn::make('recovery_time')
-                    ->label('Recovery')
+                    ->label(__('filament.labels.recovery_time'))
                     ->icon('heroicon-o-clock'),
                 Tables\Columns\TextColumn::make('load_type')
-                    ->label('Load')
+                    ->label(__('filament.labels.load_type'))
                     ->badge()
                     ->color(fn ($state): string => match ($state) {
                         'LEGER' => 'success',
@@ -262,10 +262,10 @@ class WorkoutThemeRuleResource extends Resource
                     ->preload(),
                 Tables\Filters\SelectFilter::make('load_type')
                     ->options([
-                        'LEGER' => 'Leger',
-                        'MODERE' => 'Modere',
-                        'LOURD' => 'Lourd',
-                        'MAX' => 'Maximum',
+                        'LEGER' => __('filament.load_types.leger'),
+                        'MODERE' => __('filament.load_types.modere'),
+                        'LOURD' => __('filament.load_types.lourd'),
+                        'MAX' => __('filament.load_types.max'),
                     ]),
             ])
             ->actions([
@@ -277,8 +277,8 @@ class WorkoutThemeRuleResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('No workout theme rules')
-            ->emptyStateDescription('Create rules to define workout parameters for each theme.')
+            ->emptyStateHeading(__('filament.empty.theme_rules'))
+            ->emptyStateDescription(__('filament.empty.theme_rules_desc'))
             ->emptyStateIcon('heroicon-o-cog-6-tooth');
     }
 
@@ -286,28 +286,28 @@ class WorkoutThemeRuleResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Theme')
+                Infolists\Components\Section::make(__('filament.sections.theme'))
                     ->schema([
                         Infolists\Components\TextEntry::make('theme.name')
-                            ->label('Theme Name')
+                            ->label(__('filament.labels.theme_name'))
                             ->badge(),
                         Infolists\Components\TextEntry::make('theme.type')
-                            ->label('Theme Type')
+                            ->label(__('filament.labels.theme_type'))
                             ->badge(),
                     ])
                     ->columns(2),
-                Infolists\Components\Section::make('Parameters')
+                Infolists\Components\Section::make(__('filament.sections.parameters'))
                     ->schema([
                         Infolists\Components\TextEntry::make('exercise_count')
-                            ->label('Exercises'),
+                            ->label(__('filament.labels.exercises')),
                         Infolists\Components\TextEntry::make('sets')
-                            ->label('Sets'),
+                            ->label(__('filament.labels.sets')),
                         Infolists\Components\TextEntry::make('reps')
-                            ->label('Reps'),
+                            ->label(__('filament.labels.reps')),
                         Infolists\Components\TextEntry::make('recovery_time')
-                            ->label('Recovery'),
+                            ->label(__('filament.labels.recovery_time')),
                         Infolists\Components\TextEntry::make('load_type')
-                            ->label('Load Type')
+                            ->label(__('filament.labels.load_type'))
                             ->badge(),
                     ])
                     ->columns(5),

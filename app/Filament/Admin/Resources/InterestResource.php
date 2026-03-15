@@ -61,38 +61,38 @@ class InterestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Interest Details')
-                    ->description('Define a user interest option for onboarding')
+                Forms\Components\Section::make(__('filament.sections.interest_details'))
+                    ->description(__('filament.sections.interest_details_desc'))
                     ->icon('heroicon-o-heart')
                     ->schema([
                         Forms\Components\TextInput::make('key')
-                            ->label('Unique Key')
+                            ->label(__('filament.labels.unique_key'))
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->placeholder('e.g., football, fitness, nutrition')
-                            ->helperText('Used by the mobile app to identify this interest'),
+                            ->helperText(__('filament.helper.unique_key')),
                         Forms\Components\TextInput::make('icon')
-                            ->label('Icon Name')
+                            ->label(__('filament.labels.icon'))
                             ->required()
                             ->placeholder('e.g., football, dumbbell, heart')
-                            ->helperText('Icon identifier for the mobile app'),
+                            ->helperText(__('filament.helper.icon_identifier')),
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Translations')
-                    ->description('Provide names in all supported languages (used by /onboarding-data API)')
+                Forms\Components\Section::make(__('filament.sections.translations'))
+                    ->description(__('filament.helper.translations_api'))
                     ->icon('heroicon-o-language')
                     ->schema([
                         Forms\Components\TextInput::make('name_en')
-                            ->label('English')
+                            ->label(__('filament.labels.english'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name_fr')
-                            ->label('Francais')
+                            ->label(__('filament.labels.french'))
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('name_ar')
-                            ->label('Arabic')
+                            ->label(__('filament.labels.arabic'))
                             ->required()
                             ->maxLength(255)
                             ->extraAttributes(['dir' => 'rtl']),

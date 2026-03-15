@@ -48,8 +48,8 @@ class ExerciseResource extends Resource
     public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
     {
         return [
-            'Category' => $record->category,
-            'Sub-Category' => $record->sub_category ?? 'N/A',
+            __('filament.labels.category') => $record->category,
+            __('filament.labels.sub_category') => $record->sub_category ?? 'N/A',
         ];
     }
 
@@ -74,10 +74,10 @@ class ExerciseResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('e.g., QUADRICEPS 1, SPRINT EN COTE')
+                            ->placeholder(__('filament.placeholders.exercise_name'))
                             ->columnSpanFull(),
                         Forms\Components\Select::make('category')
-                            ->label('Category')
+                            ->label(__('filament.labels.category'))
                             ->options(self::getCategoryOptions())
                             ->required()
                             ->native(false)
@@ -85,7 +85,7 @@ class ExerciseResource extends Resource
                             ->live()
                             ->afterStateUpdated(fn ($set) => $set('sub_category', null)),
                         Forms\Components\Select::make('sub_category')
-                            ->label('Sub-Category')
+                            ->label(__('filament.labels.sub_category'))
                             ->options(fn (Forms\Get $get): array => self::getSubCategoryOptions($get('category')))
                             ->searchable()
                             ->native(false),
@@ -97,7 +97,7 @@ class ExerciseResource extends Resource
                     ->icon('heroicon-o-video-camera')
                     ->schema([
                         Forms\Components\TextInput::make('video_url')
-                            ->label('Video URL')
+                            ->label(__('filament.labels.video_url'))
                             ->url()
                             ->maxLength(255)
                             ->placeholder('https://youtube.com/shorts/...')
@@ -105,14 +105,14 @@ class ExerciseResource extends Resource
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('met_value')
                             ->numeric()
-                            ->label('MET Value')
+                            ->label(__('filament.labels.met_value'))
                             ->placeholder('e.g., 4.0, 8.0, 12.0')
-                            ->helperText('Metabolic Equivalent of Task for calorie calculation')
+                            ->helperText(__('filament.helper.met_value'))
                             ->suffix('MET'),
                     ]),
 
-                Forms\Components\Section::make('Description')
-                    ->description('Optional exercise description')
+                Forms\Components\Section::make(__('filament.sections.description'))
+                    ->description(__('filament.sections.description_desc'))
                     ->icon('heroicon-o-document-text')
                     ->collapsible()
                     ->collapsed()
@@ -135,14 +135,14 @@ class ExerciseResource extends Resource
                     ->sortable()
                     ->weight('bold'),
                 Tables\Columns\TextColumn::make('category')
-                    ->label('Category')
+                    ->label(__('filament.labels.category'))
                     ->badge()
                     ->color(fn (string $state): string => self::getCategoryColor($state))
                     ->icon(fn (string $state): string => self::getCategoryIcon($state))
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sub_category')
-                    ->label('Sub-Category')
+                    ->label(__('filament.labels.sub_category'))
                     ->badge()
                     ->color('gray')
                     ->searchable()
@@ -177,20 +177,20 @@ class ExerciseResource extends Resource
             ->defaultGroup('category')
             ->groups([
                 Tables\Grouping\Group::make('category')
-                    ->label('Category')
+                    ->label(__('filament.labels.category'))
                     ->collapsible(),
                 Tables\Grouping\Group::make('sub_category')
-                    ->label('Sub-Category')
+                    ->label(__('filament.labels.sub_category'))
                     ->collapsible(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
-                    ->label('Category')
+                    ->label(__('filament.labels.category'))
                     ->options(self::getCategoryOptions())
                     ->multiple()
                     ->searchable(),
                 Tables\Filters\SelectFilter::make('sub_category')
-                    ->label('Sub-Category')
+                    ->label(__('filament.labels.sub_category'))
                     ->options(fn () => Exercise::query()->distinct()->whereNotNull('sub_category')->pluck('sub_category', 'sub_category')->toArray())
                     ->multiple()
                     ->searchable(),
@@ -219,7 +219,7 @@ class ExerciseResource extends Resource
                     ->label('Has Video')
                     ->query(fn (Builder $query): Builder => $query->whereNotNull('video_url')),
                 Tables\Filters\Filter::make('high_intensity')
-                    ->label('High Intensity (MET >= 8)')
+                    ->label(__('filament.labels.high_intensity'))
                     ->query(fn (Builder $query): Builder => $query->where('met_value', '>=', 8)),
             ])
             ->actions([

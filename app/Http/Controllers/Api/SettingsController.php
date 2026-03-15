@@ -26,6 +26,6 @@ class SettingsController extends Controller
         $validated = $request->validated();
         $settings = $request->user()->reminderSettings()->update($validated);
 
-        return ApiResponse::success($settings, 'Settings updated successfully');
+        return ApiResponse::success($settings, __('api.settings_updated'));
     }
 }

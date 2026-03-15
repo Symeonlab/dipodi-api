@@ -60,43 +60,43 @@ class OnboardingOptionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Option Identity')
-                    ->description('Define the type and key for this option')
+                Forms\Components\Section::make(__('filament.sections.option_identity'))
+                    ->description(__('filament.sections.option_identity_desc'))
                     ->icon('heroicon-o-identification')
                     ->schema([
                         Forms\Components\Select::make('type')
-                            ->label('Option Type')
+                            ->label(__('filament.labels.option_type'))
                             ->options(self::getTypeOptions())
                             ->required()
                             ->native(false)
                             ->searchable()
-                            ->helperText('The category this option belongs to'),
+                            ->helperText(__('filament.helper.option_type')),
                         Forms\Components\TextInput::make('key')
-                            ->label('Unique Key')
+                            ->label(__('filament.labels.unique_key'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('e.g., goal.lose_weight, discipline.football')
-                            ->helperText('Used by the app to identify this option')
+                            ->placeholder(__('filament.placeholders.option_key'))
+                            ->helperText(__('filament.helper.option_key'))
                             ->unique(ignoreRecord: true),
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Translations')
-                    ->description('Provide names in all supported languages')
+                Forms\Components\Section::make(__('filament.sections.translations'))
+                    ->description(__('filament.sections.translations_desc'))
                     ->icon('heroicon-o-language')
                     ->schema([
                         Forms\Components\TextInput::make('name_en')
-                            ->label('English')
+                            ->label(__('filament.labels.english'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('Name in English'),
+                            ->placeholder(__('filament.placeholders.name_en')),
                         Forms\Components\TextInput::make('name_fr')
-                            ->label('Francais')
+                            ->label(__('filament.labels.french'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('Nom en francais'),
+                            ->placeholder(__('filament.placeholders.name_fr')),
                         Forms\Components\TextInput::make('name_ar')
-                            ->label('Arabic')
+                            ->label(__('filament.labels.arabic'))
                             ->required()
                             ->maxLength(255)
                             ->placeholder('...')

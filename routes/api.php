@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\WorkoutFeedbackController;
 use App\Http\Controllers\Api\SleepController;
 use App\Http\Controllers\Api\PropheticMedicineController;
 use App\Http\Controllers\Api\IntensityZoneController;
+use App\Http\Controllers\Api\AccountController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +40,7 @@ RateLimiter::for('auth', function (Request $request) {
     return Limit::perMinute(5)->by($request->ip())->response(function () {
         return response()->json([
             'success' => false,
-            'message' => __('Too many login attempts. Please try again in a minute.'),
+            'message' => __('auth.too_many_attempts'),
         ], 429);
     });
 });
@@ -68,6 +69,9 @@ Route::prefix('auth')->middleware('throttle:auth')->group(function () {
 Route::middleware('throttle:api')->group(function () {
     Route::get('/onboarding-data', [OnboardingController::class, 'getOnboardingData']);
 
+    // GDPR / Privacy (public)
+    Route::get('/privacy', [AccountController::class, 'privacyInfo']);
+
     // Posts (Public - for viewing published content)
     Route::prefix('posts')->group(function () {
         Route::get('/', [PostController::class, 'index']);
@@ -82,6 +86,9 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
 
     // Auth
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/logout-all', [AuthController::class, 'logoutAll']);
+    Route::put('/auth/password', [AuthController::class, 'changePassword']);
+    Route::get('/auth/me', [AuthController::class, 'me']);
 
     // User & Profile
     Route::get('/user', [UserProfileController::class, 'show']);
@@ -98,6 +105,9 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // --- Settings ---
     Route::get('/settings/reminders', [SettingsController::class, 'getReminderSettings']);
     Route::put('/settings/reminders', [SettingsController::class, 'updateReminderSettings']);
+
+    // --- Workout Plan (cached read) ---
+    Route::get('/workout-plan', [WorkoutPlanController::class, 'getWeeklyPlan']);
 
     // --- Progress ---
     Route::get('/user-progress', [WorkoutPlanController::class, 'getProgress']);
@@ -152,6 +162,10 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {
     // --- Intensity Zones ---
     Route::get('/intensity-zones', [IntensityZoneController::class, 'index']);
 
+    // --- GDPR / Account Management ---
+    Route::get('/account/export', [AccountController::class, 'exportData']);
+    Route::delete('/account', [AccountController::class, 'deleteAccount']);
+
     // --- Health Assessment ---
     Route::prefix('health-assessment')->group(function () {
         Route::get('/categories', [HealthAssessmentController::class, 'categories']);
@@ -173,7 +187,6 @@ Route::middleware(['auth:sanctum', 'throttle:heavy'])->group(function () {
 
     // Workout Plan Generation (expensive calculation)
     Route::post('/workout-plan/generate', [WorkoutPlanController::class, 'generate']);
-    Route::get('/workout-plan', [WorkoutPlanController::class, 'getWeeklyPlan']);
 
     // Export Routes (PDF generation is resource intensive)
     Route::get('/export/workout-plan/pdf', [ExportController::class, 'exportWorkoutPlanPdf']);

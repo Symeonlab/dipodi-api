@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
 {
@@ -37,7 +38,7 @@ class AuthController extends Controller
         return ApiResponse::created([
             'user' => $user->load('profile'),
             'token' => $token,
-        ], 'Registration successful');
+        ], __('auth.registration_successful'));
     }
 
     /**
@@ -48,7 +49,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (!Auth::attempt($credentials)) {
-            return ApiResponse::unauthorized('Invalid credentials');
+            return ApiResponse::unauthorized(__('auth.invalid_credentials'));
         }
 
         $user = Auth::user();
@@ -61,7 +62,7 @@ class AuthController extends Controller
         return ApiResponse::success([
             'user' => $user->load('profile'),
             'token' => $token,
-        ], 'Login successful');
+        ], __('auth.login_successful'));
     }
 
     /**
@@ -70,7 +71,16 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return ApiResponse::success(null, 'Logged out successfully');
+        return ApiResponse::success(null, __('auth.logout_successful'));
+    }
+
+    /**
+     * Log out from all devices (invalidates all tokens).
+     */
+    public function logoutAll(Request $request)
+    {
+        $request->user()->tokens()->delete();
+        return ApiResponse::success(null, __('auth.logout_all_successful'));
     }
 
     /**
@@ -82,9 +92,45 @@ class AuthController extends Controller
         $status = Password::sendResetLink($request->only('email'));
 
         if ($status === Password::RESET_LINK_SENT) {
-            return ApiResponse::success(null, 'Password reset link sent.');
+            return ApiResponse::success(null, __('auth.reset_link_sent'));
         }
 
-        return ApiResponse::error('Unable to send reset link.');
+        return ApiResponse::error(__('auth.reset_link_failed'));
+    }
+
+    /**
+     * Change the authenticated user's password.
+     */
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return ApiResponse::error(__('auth.current_password_incorrect'), 422);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Revoke all other tokens for security
+        $user->tokens()->where('id', '!=', $user->currentAccessToken()->id)->delete();
+
+        return ApiResponse::success(null, __('auth.password_changed'));
+    }
+
+    /**
+     * Get the authenticated user's info (auth status check).
+     */
+    public function me(Request $request)
+    {
+        return ApiResponse::success([
+            'user' => $request->user()->load('profile'),
+        ]);
     }
 }

@@ -46,7 +46,7 @@ class UserProfileController extends Controller
 
         return ApiResponse::success(
             $user->load('profile'),
-            'Profile updated successfully'
+            __('api.profile_updated')
         );
     }
 }

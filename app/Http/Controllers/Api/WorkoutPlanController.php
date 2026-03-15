@@ -25,8 +25,12 @@ class WorkoutPlanController extends Controller
     {
         $user = Auth::user()->load('profile');
 
+        if (!$user->profile) {
+            return ApiResponse::error(__('api.profile_required'), 422);
+        }
+
         if (empty($user->profile->position) || empty($user->profile->training_location)) {
-            return ApiResponse::error('Please complete your player profile (position, training location) to generate a plan.');
+            return ApiResponse::error(__('api.profile_required'), 422);
         }
 
         $generator = new WorkoutPlanGenerator($user);
@@ -35,7 +39,7 @@ class WorkoutPlanController extends Controller
         // Invalidate the weekly plan cache after generating new plan
         self::invalidateWeeklyPlanCache($user->id);
 
-        return ApiResponse::success(null, 'Weekly plan generated successfully.');
+        return ApiResponse::success(null, __('api.plan_generated'));
     }
 
     /**
@@ -77,7 +81,7 @@ class WorkoutPlanController extends Controller
         // Invalidate progress cache
         Cache::forget("user_progress:user_{$user->id}");
 
-        return ApiResponse::created($progress, 'Progress logged successfully');
+        return ApiResponse::created($progress, __('api.progress_logged'));
     }
 
     /**

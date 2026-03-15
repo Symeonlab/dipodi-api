@@ -96,25 +96,25 @@ class FoodItemResource extends Resource
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Sport Nutrition')
-                    ->description('H+1 (Energy) and H+24 (Recovery) timing values')
+                Forms\Components\Section::make(__('filament.sections.sport_nutrition'))
+                    ->description(__('filament.sections.sport_nutrition_desc'))
                     ->icon('heroicon-o-bolt')
                     ->schema([
                         Forms\Components\TextInput::make('h_plus_1_energy')
-                            ->label('H+1 Energy')
+                            ->label(__('filament.labels.h1_energy'))
                             ->numeric()
                             ->step(0.1)
-                            ->helperText('Energy value at H+1 after intake'),
+                            ->helperText(__('filament.helper.h1_energy')),
                         Forms\Components\TextInput::make('h_plus_24_recovery')
-                            ->label('H+24 Recovery')
+                            ->label(__('filament.labels.h24_recovery'))
                             ->numeric()
                             ->step(0.1)
-                            ->helperText('Recovery value at H+24 after intake'),
+                            ->helperText(__('filament.helper.h24_recovery')),
                         Forms\Components\Select::make('meal_timing')
-                            ->label('Meal Timing')
+                            ->label(__('filament.labels.meal_timing'))
                             ->options([
-                                'pre_workout' => 'Pre-Workout',
-                                'post_workout' => 'Post-Workout',
+                                'pre_workout' => __('filament.meal_timing.pre_workout'),
+                                'post_workout' => __('filament.meal_timing.post_workout'),
                                 'recovery' => 'Recovery',
                                 'any' => 'Any Time',
                             ])

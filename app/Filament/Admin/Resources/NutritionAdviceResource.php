@@ -53,8 +53,8 @@ class NutritionAdviceResource extends Resource
         $avoidCount = is_array($avoid) ? count($avoid) : (empty($avoid) ? 0 : 1);
         $eatCount = is_array($eat) ? count($eat) : (empty($eat) ? 0 : 1);
         return [
-            'Foods to Avoid' => "{$avoidCount} items",
-            'Foods to Eat' => "{$eatCount} items",
+            __('filament.labels.foods_to_avoid') => "{$avoidCount} items",
+            __('filament.labels.foods_to_eat') => "{$eatCount} items",
         ];
     }
 
@@ -77,7 +77,7 @@ class NutritionAdviceResource extends Resource
                     ->icon('heroicon-o-identification')
                     ->schema([
                         Forms\Components\TextInput::make('condition_name')
-                            ->label('Condition Name')
+                            ->label(__('filament.labels.condition_name'))
                             ->required()
                             ->maxLength(255)
                             ->placeholder('e.g., Fatigue, Crampes, Migraine')
@@ -90,14 +90,14 @@ class NutritionAdviceResource extends Resource
                     ->icon('heroicon-o-clipboard-document-list')
                     ->schema([
                         Forms\Components\TagsInput::make('foods_to_avoid')
-                            ->label('Foods to Avoid')
-                            ->placeholder('Add foods to avoid...')
-                            ->helperText('Press Enter after each food item')
+                            ->label(__('filament.labels.foods_to_avoid'))
+                            ->placeholder(__('filament.placeholders.add_foods_avoid'))
+                            ->helperText(__('filament.helper.press_enter_each'))
                             ->color('danger'),
                         Forms\Components\TagsInput::make('foods_to_eat')
-                            ->label('Foods to Eat')
-                            ->placeholder('Add recommended foods...')
-                            ->helperText('Press Enter after each food item')
+                            ->label(__('filament.labels.foods_to_eat'))
+                            ->placeholder(__('filament.placeholders.add_foods_eat'))
+                            ->helperText(__('filament.helper.press_enter_each'))
                             ->color('success'),
                     ])
                     ->columns(2),
@@ -108,17 +108,17 @@ class NutritionAdviceResource extends Resource
                     ->collapsible()
                     ->schema([
                         Forms\Components\Textarea::make('prophetic_advice_fr')
-                            ->label('Prophetic Advice (Francais)')
+                            ->label(__('filament.labels.prophetic_advice_fr'))
                             ->rows(3)
                             ->placeholder('Conseil en francais...')
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('prophetic_advice_en')
-                            ->label('Prophetic Advice (English)')
+                            ->label(__('filament.labels.prophetic_advice_en'))
                             ->rows(3)
                             ->placeholder('Advice in English...')
                             ->columnSpanFull(),
                         Forms\Components\Textarea::make('prophetic_advice_ar')
-                            ->label('Prophetic Advice (Arabic)')
+                            ->label(__('filament.labels.prophetic_advice_ar'))
                             ->rows(3)
                             ->placeholder('...')
                             ->extraAttributes(['dir' => 'rtl'])

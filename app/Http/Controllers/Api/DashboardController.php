@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserProgress;
@@ -18,8 +19,6 @@ class DashboardController extends Controller
     public function getMetrics(Request $request)
     {
         $user = $request->user();
-        $locale = $request->header('Accept-Language', 'en');
-        $locale = in_array($locale, ['en', 'fr', 'ar']) ? $locale : 'en';
 
         // 1. Get Stats Overview
         $stats = [
@@ -64,42 +63,39 @@ class DashboardController extends Controller
             ];
         }
 
-        // 5. Get Achievement Summary
+        // 5. Get Achievement Summary — uses model accessors for locale
         $totalAchievements = $user->achievements()->count();
         $totalPoints = $user->achievements()->sum('points');
         $recentAchievements = $user->achievements()
             ->orderByPivot('earned_at', 'desc')
             ->limit(3)
             ->get()
-            ->map(function ($achievement) use ($locale) {
-                $nameField = "name_{$locale}";
+            ->map(function ($achievement) {
                 return [
                     'id' => $achievement->id,
-                    'name' => $achievement->{$nameField} ?? $achievement->name_en,
+                    'name' => $achievement->name,
                     'icon' => $achievement->icon,
                     'points' => $achievement->points,
                     'earned_at' => $achievement->pivot->earned_at,
                 ];
             });
 
-        // 6. Get Latest Posts
+        // 6. Get Latest Posts — uses model accessors for locale
         $latestPosts = Post::where('is_published', true)
             ->orderBy('created_at', 'desc')
             ->limit(3)
             ->get()
-            ->map(function ($post) use ($locale) {
-                $titleField = "title_{$locale}";
+            ->map(function ($post) {
                 return [
                     'id' => $post->id,
-                    'title' => $post->{$titleField} ?? $post->title_en,
+                    'title' => $post->title,
                     'slug' => $post->slug,
                     'featured_image' => $post->featured_image,
                     'published_at' => $post->created_at->toIso8601String(),
                 ];
             });
 
-        return response()->json([
-            'success' => true,
+        return ApiResponse::success([
             'stats' => $stats,
             'chart' => $chart,
             'my_latest_progress' => $latestProgress,

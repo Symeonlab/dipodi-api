@@ -49,64 +49,64 @@ class PushNotificationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Notification Content')
-                    ->description('Compose your push notification message')
+                Forms\Components\Section::make(__('filament.sections.notification_content'))
+                    ->description(__('filament.sections.notification_content_desc'))
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label('Notification Title')
+                            ->label(__('filament.labels.notification_title'))
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('e.g., New workout available!')
-                            ->helperText('Keep it short and engaging (max 50 chars recommended)'),
+                            ->placeholder(__('filament.placeholders.notification_title'))
+                            ->helperText(__('filament.helper.keep_short')),
                         Forms\Components\Textarea::make('body')
-                            ->label('Message Body')
+                            ->label(__('filament.labels.message_body'))
                             ->required()
                             ->rows(4)
-                            ->placeholder('Write your notification message here...')
-                            ->helperText('The main content of your notification')
+                            ->placeholder(__('filament.placeholders.notification_body'))
+                            ->helperText(__('filament.helper.notification_body'))
                             ->columnSpanFull(),
                     ]),
 
-                Forms\Components\Section::make('Scheduling & Targeting')
-                    ->description('When and who should receive this notification')
+                Forms\Components\Section::make(__('filament.sections.scheduling_targeting'))
+                    ->description(__('filament.sections.scheduling_targeting_desc'))
                     ->icon('heroicon-o-clock')
                     ->schema([
                         Forms\Components\Select::make('status')
-                            ->label('Status')
+                            ->label(__('filament.labels.status'))
                             ->options([
-                                'draft' => 'Draft',
-                                'scheduled' => 'Scheduled',
-                                'sent' => 'Sent',
-                                'cancelled' => 'Cancelled',
+                                'draft' => __('filament.notification_status.draft'),
+                                'scheduled' => __('filament.notification_status.scheduled'),
+                                'sent' => __('filament.notification_status.sent'),
+                                'cancelled' => __('filament.notification_status.cancelled'),
                             ])
                             ->default('draft')
                             ->required()
                             ->native(false),
                         Forms\Components\DateTimePicker::make('scheduled_at')
-                            ->label('Schedule For')
-                            ->placeholder('Select date and time')
-                            ->helperText('Leave empty to send immediately when status is changed to Scheduled')
+                            ->label(__('filament.labels.schedule_for'))
+                            ->placeholder(__('filament.placeholders.select_datetime'))
+                            ->helperText(__('filament.helper.schedule_empty'))
                             ->seconds(false),
                         Forms\Components\DateTimePicker::make('sent_at')
-                            ->label('Sent At')
+                            ->label(__('filament.labels.sent_at'))
                             ->disabled()
-                            ->helperText('Automatically set when notification is sent'),
+                            ->helperText(__('filament.helper.sent_auto')),
                         Forms\Components\Select::make('target_users')
-                            ->label('Target Audience')
+                            ->label(__('filament.labels.target_audience'))
                             ->multiple()
                             ->options([
-                                'all' => 'All Users',
-                                'active' => 'Active Users (last 7 days)',
-                                'inactive' => 'Inactive Users',
-                                'onboarded' => 'Completed Onboarding',
-                                'not_onboarded' => 'Not Completed Onboarding',
-                                'football' => 'Football Players',
-                                'fitness' => 'Fitness Users',
-                                'padel' => 'Padel Players',
+                                'all' => __('filament.target_audiences.all'),
+                                'active' => __('filament.target_audiences.active'),
+                                'inactive' => __('filament.target_audiences.inactive'),
+                                'onboarded' => __('filament.target_audiences.onboarded'),
+                                'not_onboarded' => __('filament.target_audiences.not_onboarded'),
+                                'football' => __('filament.target_audiences.football'),
+                                'fitness' => __('filament.target_audiences.fitness'),
+                                'padel' => __('filament.target_audiences.padel'),
                             ])
                             ->default(['all'])
-                            ->helperText('Select target user groups'),
+                            ->helperText(__('filament.helper.select_target')),
                     ])
                     ->columns(2),
             ]);
@@ -117,7 +117,7 @@ class PushNotificationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->label('Title')
+                    ->label(__('filament.labels.title'))
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
@@ -126,7 +126,7 @@ class PushNotificationResource extends Resource
                         return $record->title;
                     }),
                 Tables\Columns\TextColumn::make('body')
-                    ->label('Message')
+                    ->label(__('filament.labels.message'))
                     ->limit(50)
                     ->toggleable()
                     ->tooltip(function (PushNotification $record): string {
@@ -150,7 +150,7 @@ class PushNotificationResource extends Resource
                     })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('target_users')
-                    ->label('Audience')
+                    ->label(__('filament.labels.audience'))
                     ->badge()
                     ->color('info')
                     ->formatStateUsing(function ($state) {
@@ -161,21 +161,21 @@ class PushNotificationResource extends Resource
                     })
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('scheduled_at')
-                    ->label('Scheduled')
+                    ->label(__('filament.labels.scheduled'))
                     ->dateTime('M d, Y H:i')
                     ->sortable()
-                    ->placeholder('Not scheduled')
+                    ->placeholder(__('filament.placeholders.not_scheduled'))
                     ->color(fn (PushNotification $record): string =>
                         $record->scheduled_at && $record->scheduled_at->isFuture() ? 'warning' : 'gray'
                     ),
                 Tables\Columns\TextColumn::make('sent_at')
-                    ->label('Sent')
+                    ->label(__('filament.labels.sent'))
                     ->dateTime('M d, Y H:i')
                     ->sortable()
-                    ->placeholder('Not sent yet')
+                    ->placeholder(__('filament.placeholders.not_sent'))
                     ->color('success'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label(__('filament.labels.created'))
                     ->dateTime('M d, Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -184,28 +184,28 @@ class PushNotificationResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'draft' => 'Draft',
-                        'scheduled' => 'Scheduled',
-                        'sent' => 'Sent',
-                        'cancelled' => 'Cancelled',
+                        'draft' => __('filament.notification_status.draft'),
+                        'scheduled' => __('filament.notification_status.scheduled'),
+                        'sent' => __('filament.notification_status.sent'),
+                        'cancelled' => __('filament.notification_status.cancelled'),
                     ])
                     ->multiple(),
                 Tables\Filters\Filter::make('scheduled_future')
-                    ->label('Upcoming Only')
+                    ->label(__('filament.labels.upcoming_only'))
                     ->query(fn (Builder $query): Builder => $query->where('scheduled_at', '>', now())),
                 Tables\Filters\Filter::make('sent_today')
-                    ->label('Sent Today')
+                    ->label(__('filament.labels.sent_today'))
                     ->query(fn (Builder $query): Builder => $query->whereDate('sent_at', today())),
             ])
             ->actions([
                 Tables\Actions\Action::make('send')
-                    ->label('Send Now')
+                    ->label(__('filament.actions.send_now'))
                     ->icon('heroicon-o-paper-airplane')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->modalHeading('Send Notification')
-                    ->modalDescription('Are you sure you want to send this notification immediately?')
-                    ->modalSubmitActionLabel('Yes, send it')
+                    ->modalHeading(__('filament.actions.send_notification'))
+                    ->modalDescription(__('filament.actions.confirm_send'))
+                    ->modalSubmitActionLabel(__('filament.actions.yes_send'))
                     ->visible(fn (PushNotification $record): bool => in_array($record->status, ['draft', 'scheduled']))
                     ->action(function (PushNotification $record) {
                         $record->update([
@@ -214,7 +214,7 @@ class PushNotificationResource extends Resource
                         ]);
                     }),
                 Tables\Actions\Action::make('duplicate')
-                    ->label('Duplicate')
+                    ->label(__('filament.actions.duplicate'))
                     ->icon('heroicon-o-document-duplicate')
                     ->color('gray')
                     ->action(function (PushNotification $record) {
@@ -233,8 +233,8 @@ class PushNotificationResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('No notifications yet')
-            ->emptyStateDescription('Create your first push notification to engage with users.')
+            ->emptyStateHeading(__('filament.empty.notifications'))
+            ->emptyStateDescription(__('filament.empty.notifications_desc'))
             ->emptyStateIcon('heroicon-o-bell-alert');
     }
 
@@ -242,7 +242,7 @@ class PushNotificationResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Notification Content')
+                Infolists\Components\Section::make(__('filament.sections.notification_content'))
                     ->icon('heroicon-o-chat-bubble-left-right')
                     ->schema([
                         Infolists\Components\TextEntry::make('title')
@@ -251,7 +251,7 @@ class PushNotificationResource extends Resource
                         Infolists\Components\TextEntry::make('body')
                             ->columnSpanFull(),
                     ]),
-                Infolists\Components\Section::make('Status & Scheduling')
+                Infolists\Components\Section::make(__('filament.sections.status_scheduling'))
                     ->icon('heroicon-o-clock')
                     ->schema([
                         Infolists\Components\TextEntry::make('status')
@@ -264,15 +264,15 @@ class PushNotificationResource extends Resource
                                 default => 'gray',
                             }),
                         Infolists\Components\TextEntry::make('target_users')
-                            ->label('Target Audience')
+                            ->label(__('filament.labels.target_audience'))
                             ->badge()
                             ->color('info'),
                         Infolists\Components\TextEntry::make('scheduled_at')
                             ->dateTime('F j, Y g:i A')
-                            ->placeholder('Not scheduled'),
+                            ->placeholder(__('filament.placeholders.not_scheduled')),
                         Infolists\Components\TextEntry::make('sent_at')
                             ->dateTime('F j, Y g:i A')
-                            ->placeholder('Not sent yet'),
+                            ->placeholder(__('filament.placeholders.not_sent')),
                     ])
                     ->columns(2),
             ]);

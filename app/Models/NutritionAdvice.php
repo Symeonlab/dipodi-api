@@ -16,4 +16,11 @@ class NutritionAdvice extends Model
         'foods_to_avoid' => 'array',
         'foods_to_eat' => 'array',
     ];
+
+    // Accessor — resolve locale automatically via app()->getLocale()
+    public function getPropheticAdviceAttribute(): string
+    {
+        $locale = app()->getLocale();
+        return $this->{"prophetic_advice_{$locale}"} ?? $this->prophetic_advice_en;
+    }
 }

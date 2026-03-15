@@ -53,46 +53,46 @@ class UserProgressResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('User & Date')
+                Forms\Components\Section::make(__('filament.sections.user_date'))
                     ->icon('heroicon-o-calendar')
                     ->schema([
                         Forms\Components\Select::make('user_id')
-                            ->label('User')
+                            ->label(__('filament.labels.user'))
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),
                         Forms\Components\DatePicker::make('date')
-                            ->label('Log Date')
+                            ->label(__('filament.labels.log_date'))
                             ->required()
                             ->default(now()),
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Body Measurements')
-                    ->description('Track body metrics from the mobile app')
+                Forms\Components\Section::make(__('filament.sections.body_measurements'))
+                    ->description(__('filament.sections.body_measurements_desc'))
                     ->icon('heroicon-o-scale')
                     ->schema([
                         Forms\Components\TextInput::make('weight')
-                            ->label('Weight')
+                            ->label(__('filament.labels.weight'))
                             ->numeric()
                             ->suffix('kg')
                             ->minValue(30)
                             ->maxValue(300),
                         Forms\Components\TextInput::make('waist')
-                            ->label('Waist')
+                            ->label(__('filament.labels.waist'))
                             ->numeric()
                             ->suffix('cm')
                             ->minValue(30)
                             ->maxValue(200),
                         Forms\Components\TextInput::make('chest')
-                            ->label('Chest')
+                            ->label(__('filament.labels.chest'))
                             ->numeric()
                             ->suffix('cm')
                             ->minValue(30)
                             ->maxValue(200),
                         Forms\Components\TextInput::make('hips')
-                            ->label('Hips')
+                            ->label(__('filament.labels.hips'))
                             ->numeric()
                             ->suffix('cm')
                             ->minValue(30)
@@ -100,24 +100,24 @@ class UserProgressResource extends Resource
                     ])
                     ->columns(4),
 
-                Forms\Components\Section::make('Workout & Notes')
+                Forms\Components\Section::make(__('filament.sections.workout_notes'))
                     ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\TextInput::make('workout_completed')
-                            ->label('Workout Completed')
-                            ->placeholder('e.g., Full body, Cardio, Kine'),
+                            ->label(__('filament.labels.workout_completed'))
+                            ->placeholder(__('filament.placeholders.workout_completed')),
                         Forms\Components\Select::make('mood')
-                            ->label('Mood')
+                            ->label(__('filament.labels.mood'))
                             ->options([
-                                'great' => 'Great',
-                                'good' => 'Good',
-                                'okay' => 'Okay',
-                                'tired' => 'Tired',
-                                'bad' => 'Bad',
+                                'great' => __('filament.moods.great'),
+                                'good' => __('filament.moods.good'),
+                                'okay' => __('filament.moods.okay'),
+                                'tired' => __('filament.moods.tired'),
+                                'bad' => __('filament.moods.bad'),
                             ])
                             ->native(false),
                         Forms\Components\Textarea::make('notes')
-                            ->label('Notes')
+                            ->label(__('filament.labels.notes'))
                             ->rows(3)
                             ->columnSpanFull(),
                     ])
@@ -130,38 +130,38 @@ class UserProgressResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
+                    ->label(__('filament.labels.user'))
                     ->searchable()
                     ->sortable()
                     ->icon('heroicon-o-user'),
                 Tables\Columns\TextColumn::make('date')
-                    ->label('Date')
+                    ->label(__('filament.labels.log_date'))
                     ->date('M d, Y')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
-                    ->label('Weight')
+                    ->label(__('filament.labels.weight'))
                     ->suffix(' kg')
                     ->numeric()
                     ->sortable()
                     ->badge()
                     ->color('info'),
                 Tables\Columns\TextColumn::make('waist')
-                    ->label('Waist')
+                    ->label(__('filament.labels.waist'))
                     ->suffix(' cm')
                     ->numeric()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('chest')
-                    ->label('Chest')
+                    ->label(__('filament.labels.chest'))
                     ->suffix(' cm')
                     ->numeric()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('hips')
-                    ->label('Hips')
+                    ->label(__('filament.labels.hips'))
                     ->suffix(' cm')
                     ->numeric()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('mood')
-                    ->label('Mood')
+                    ->label(__('filament.labels.mood'))
                     ->badge()
                     ->color(fn (?string $state): string => match ($state) {
                         'great' => 'success',
@@ -191,11 +191,11 @@ class UserProgressResource extends Resource
                     ->preload(),
                 Tables\Filters\SelectFilter::make('mood')
                     ->options([
-                        'great' => 'Great',
-                        'good' => 'Good',
-                        'okay' => 'Okay',
-                        'tired' => 'Tired',
-                        'bad' => 'Bad',
+                        'great' => __('filament.moods.great'),
+                        'good' => __('filament.moods.good'),
+                        'okay' => __('filament.moods.okay'),
+                        'tired' => __('filament.moods.tired'),
+                        'bad' => __('filament.moods.bad'),
                     ]),
                 Tables\Filters\Filter::make('has_weight')
                     ->label('Has Weight')
@@ -240,19 +240,19 @@ class UserProgressResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('User & Date')
+                Infolists\Components\Section::make(__('filament.sections.user_date'))
                     ->icon('heroicon-o-user')
                     ->schema([
                         Infolists\Components\TextEntry::make('user.name')
-                            ->label('User'),
+                            ->label(__('filament.labels.user')),
                         Infolists\Components\TextEntry::make('user.email')
-                            ->label('Email'),
+                            ->label(__('filament.labels.email')),
                         Infolists\Components\TextEntry::make('date')
                             ->date('F j, Y'),
                     ])
                     ->columns(3),
 
-                Infolists\Components\Section::make('Body Measurements')
+                Infolists\Components\Section::make(__('filament.sections.body_measurements'))
                     ->icon('heroicon-o-scale')
                     ->schema([
                         Infolists\Components\TextEntry::make('weight')

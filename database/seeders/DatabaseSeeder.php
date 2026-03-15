@@ -31,6 +31,15 @@ class DatabaseSeeder extends Seeder
             // 3. Additional cardio themes & profile-theme mappings
             DipoddiCardioAndMappingsSeeder::class,
 
+            // 3b. Cardio/Home/Mobility Enhancement (zone colors, RPE, freshness)
+            CardioThemeEnhancementSeeder::class,
+
+            // 3c. Cardio Profile-Theme Mappings (maps profiles to appropriate cardio themes)
+            CardioProfileMappingSeeder::class,
+
+            // 3d. Data corrections (display names, zone colors, unmapped themes)
+            DipoddiProgrammeCorrectionSeeder::class,
+
             // 4. Food items (not included in DipoddiProgrammeSeeder)
             FoodItemSeeder::class,
 

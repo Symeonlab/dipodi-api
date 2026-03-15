@@ -44,4 +44,17 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Accessors — resolve locale automatically via app()->getLocale()
+    public function getTitleAttribute(): string
+    {
+        $locale = app()->getLocale();
+        return $this->{"title_{$locale}"} ?? $this->title_en;
+    }
+
+    public function getContentAttribute(): string
+    {
+        $locale = app()->getLocale();
+        return $this->{"content_{$locale}"} ?? $this->content_en;
+    }
 }

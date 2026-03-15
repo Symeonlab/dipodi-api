@@ -62,26 +62,26 @@ class BonusWorkoutRuleResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Rule Configuration')
-                    ->description('Define the workout rule parameters')
+                Forms\Components\Section::make(__('filament.sections.rule_config'))
+                    ->description(__('filament.sections.rule_config_desc'))
                     ->icon('heroicon-o-cog-6-tooth')
                     ->schema([
                         Forms\Components\Select::make('level')
-                            ->label('Difficulty Level')
+                            ->label(__('filament.labels.difficulty_level'))
                             ->options([
-                                'DÉBUTANT' => 'Debutant (Beginner)',
-                                'INTERMÉDIAIRE' => 'Intermediaire (Intermediate)',
-                                'AVANCÉ' => 'Avance (Advanced)',
+                                'DÉBUTANT' => __('filament.difficulty_levels.debutant'),
+                                'INTERMÉDIAIRE' => __('filament.difficulty_levels.intermediaire'),
+                                'AVANCÉ' => __('filament.difficulty_levels.avance'),
                                 'ALL' => 'All Levels',
                             ])
                             ->required()
                             ->native(false),
                         Forms\Components\Select::make('type')
-                            ->label('Workout Type')
+                            ->label(__('filament.labels.workout_type'))
                             ->options([
-                                'ABDOS' => 'Abdos (Core)',
-                                'POMPES' => 'Pompes (Push-ups)',
-                                'GAINAGE' => 'Gainage (Planks)',
+                                'ABDOS' => __('filament.bonus_types.abdos'),
+                                'POMPES' => __('filament.bonus_types.pompes'),
+                                'GAINAGE' => __('filament.bonus_types.gainage'),
                                 'GAINAGE + ABDOS' => 'Gainage + Abdos',
                                 'GAINAGE + POMPES' => 'Gainage + Pompes',
                                 'POMPES + ABDOS' => 'Pompes + Abdos',
@@ -95,8 +95,8 @@ class BonusWorkoutRuleResource extends Resource
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Workout Parameters')
-                    ->description('Set the workout intensity and rest periods')
+                Forms\Components\Section::make(__('filament.sections.workout_parameters'))
+                    ->description(__('filament.sections.workout_parameters_desc'))
                     ->icon('heroicon-o-chart-bar')
                     ->schema([
                         Forms\Components\TextInput::make('sets')
@@ -290,7 +290,7 @@ class BonusWorkoutRuleResource extends Resource
     {
         return $infolist
             ->schema([
-                Infolists\Components\Section::make('Rule Configuration')
+                Infolists\Components\Section::make(__('filament.sections.rule_config'))
                     ->icon('heroicon-o-cog-6-tooth')
                     ->schema([
                         Infolists\Components\TextEntry::make('level')
@@ -314,7 +314,7 @@ class BonusWorkoutRuleResource extends Resource
                     ])
                     ->columns(2),
 
-                Infolists\Components\Section::make('Workout Parameters')
+                Infolists\Components\Section::make(__('filament.sections.workout_parameters'))
                     ->icon('heroicon-o-chart-bar')
                     ->schema([
                         Infolists\Components\TextEntry::make('sets')

@@ -20,7 +20,7 @@ class SocialAuthController extends Controller
     {
         // Validate provider is one of the allowed ones
         if (!in_array($provider, ['google', 'facebook', 'apple'])) {
-            return ApiResponse::error('Unsupported authentication provider.', 422);
+            return ApiResponse::error(__('auth.unsupported_provider'), 422);
         }
 
         $request->validate(['token' => 'required|string']);
@@ -30,13 +30,13 @@ class SocialAuthController extends Controller
             $socialUser = Socialite::driver($provider)->stateless()->userFromToken($request->token);
 
             if (empty($socialUser)) {
-                return ApiResponse::error('Invalid authentication token.', 401);
+                return ApiResponse::error(__('auth.invalid_token'), 401);
             }
 
             // Ensure we have an email — Apple Sign In can hide emails
             $email = $socialUser->getEmail();
             if (empty($email)) {
-                return ApiResponse::error('An email address is required. Please allow email access in your provider settings.', 422);
+                return ApiResponse::error(__('auth.email_required'), 422);
             }
 
             // Find or create the user in your database
@@ -57,7 +57,7 @@ class SocialAuthController extends Controller
             return ApiResponse::success([
                 'token' => $token,
                 'user'  => $user->load('profile'),
-            ], 'Login successful');
+            ], __('auth.login_successful'));
 
         } catch (\Exception $e) {
             // Log the real error internally but return a generic message
@@ -66,7 +66,7 @@ class SocialAuthController extends Controller
                 'error'    => $e->getMessage(),
             ]);
 
-            return ApiResponse::error('Login failed. Please try again.', 401);
+            return ApiResponse::error(__('auth.social_login_failed'), 401);
         }
     }
 }
