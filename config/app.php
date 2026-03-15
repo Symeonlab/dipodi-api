@@ -181,7 +181,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\Filament\AdminPanelProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        // RouteServiceProvider removed — routing now in bootstrap/app.php (Laravel 11)
     ])->toArray(),
 
     /*
