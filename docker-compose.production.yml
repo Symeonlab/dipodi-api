@@ -1,90 +1,42 @@
-# Production overrides for docker-compose.yml
-# Usage: docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+# ──────────────────────────────────────────
+# Dipoddi API — Production (Sliplane)
+# ──────────────────────────────────────────
+# NOTE: On Sliplane, each service is deployed separately.
+# This file is for reference / self-hosted production only.
+#
+# Sliplane setup:
+#   Service 1: dipodi-api    (Dockerfile in root)
+#   Service 2: dipodi-mysql  (docker/mysql/Dockerfile)
+#
+# Usage (self-hosted):
+#   docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
+# ──────────────────────────────────────────
 
 services:
-  # Laravel PHP Application
+  # Laravel PHP Application (single container)
   app:
-    restart: always
-    environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
-
-  # Nginx Web Server
-  nginx:
     restart: always
     ports:
       - "80:80"
-      - "443:443"
-    volumes:
-      - ./:/var/www
-      - ./docker/nginx/production.conf:/etc/nginx/conf.d/default.conf:ro
-      - ssl-certs:/etc/nginx/ssl:ro
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: https://dipodi-api.sliplane.app
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: dipodi_api
+      DB_USERNAME: dipodi
+      DB_PASSWORD: ${DB_PASSWORD}
+      DIPODI_APP_KEY_HASH: ${DIPODI_APP_KEY_HASH}
 
   # MySQL Database — port NOT exposed in production
   mysql:
     restart: always
     ports: []
-
-  # Redis cache and queue backend
-  redis:
-    image: redis:7-alpine
-    container_name: dipodi-redis
-    restart: always
-    networks:
-      - dipodi-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-
-  # Laravel queue worker
-  queue:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: dipodi-queue
-    restart: always
-    command: php artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
-    working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      - ./docker/php/production.ini:/usr/local/etc/php/conf.d/production.ini
-    networks:
-      - dipodi-network
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
-
-  # Laravel scheduler (runs php artisan schedule:run every minute)
-  scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: dipodi-scheduler
-    restart: always
-    command: >
-      sh -c "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
-    working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      - ./docker/php/production.ini:/usr/local/etc/php/conf.d/production.ini
-    networks:
-      - dipodi-network
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      APP_ENV: production
-      APP_DEBUG: "false"
-
-volumes:
-  ssl-certs:
-    driver: local
+      MYSQL_DATABASE: dipodi_api
+      MYSQL_USER: dipodi
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    security_opt:
+      - no-new-privileges:true

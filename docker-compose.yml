@@ -1,12 +1,33 @@
+# ──────────────────────────────────────────
+# Dipoddi API — Local Development
+# ──────────────────────────────────────────
+# Usage:
+#   cp .env.example .env
+#   docker compose up -d
+#   docker compose exec app php artisan migrate --seed
+#
+# Production: use Sliplane (see docker/mysql/Dockerfile)
+# ──────────────────────────────────────────
+
 services:
-  # Laravel PHP Application
+  # Laravel PHP Application (single container: PHP-FPM + Nginx)
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: dipodi-app
     restart: unless-stopped
-    working_dir: /var/www
+    ports:
+      - "8000:80"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: dipodi_api
+      DB_USERNAME: dipodi
+      DB_PASSWORD: ${DB_PASSWORD:-DipoddiLocal2026!}
     volumes:
       - ./:/var/www
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
@@ -16,22 +37,7 @@ services:
       mysql:
         condition: service_healthy
 
-  # Nginx Web Server
-  nginx:
-    image: nginx:alpine
-    container_name: dipodi-nginx
-    restart: unless-stopped
-    ports:
-      - "8000:80"
-    volumes:
-      - ./:/var/www
-      - ./docker/nginx/conf.d:/etc/nginx/conf.d
-    networks:
-      - dipodi-network
-    depends_on:
-      - app
-
-  # MySQL Database
+  # MySQL 8.0 Database
   mysql:
     image: mysql:8.0
     container_name: dipodi-mysql
@@ -39,20 +45,24 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-dipodi_api}
-      MYSQL_USER: ${DB_USERNAME:-sail}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_DATABASE: dipodi_api
+      MYSQL_USER: dipodi
+      MYSQL_PASSWORD: ${DB_PASSWORD:-DipoddiLocal2026!}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-DipoddiRootLocal2026!}
     volumes:
       - dipodi-mysql-data:/var/lib/mysql
-      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/dipoddi.cnf
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql
     networks:
       - dipodi-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s
       timeout: 3s
       retries: 10
+    # Security: don't run as root inside container
+    security_opt:
+      - no-new-privileges:true
 
 networks:
   dipodi-network:
