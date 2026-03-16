@@ -7,6 +7,14 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
+     * Check if running in production (where Faker is not available).
+     */
+    private function isProduction(): bool
+    {
+        return app()->environment('production');
+    }
+
+    /**
      * Seed the application's database.
      */
     public function run(): void
@@ -56,11 +64,14 @@ class DatabaseSeeder extends Seeder
             HomeWorkoutRuleSeeder::class,
 
             // 7. Test Users (depends on static data)
-            UserSeeder::class,
+            //    Skipped in production — uses Faker (dev-only dependency)
+            ...($this->isProduction() ? [] : [
+                UserSeeder::class,
 
-            // 8. Data related to users (depends on UserSeeder)
-            UserReminderSettingSeeder::class,
-            UserFavoriteExerciseSeeder::class,
+                // 8. Data related to users (depends on UserSeeder)
+                UserReminderSettingSeeder::class,
+                UserFavoriteExerciseSeeder::class,
+            ]),
         ]);
     }
 }
