@@ -1,6 +1,17 @@
 # Dipoddi API - Production Single-Container Setup
 # PHP 8.3 + Nginx + Supervisord for Sliplane deployment
 
+# ── Stage 1: Build frontend assets with Node ──
+FROM node:20-alpine AS frontend
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci
+COPY vite.config.js ./
+COPY resources/ ./resources/
+COPY postcss.config.js tailwind.config.js* ./
+RUN npm run build
+
+# ── Stage 2: PHP application ──
 FROM php:8.3-fpm
 
 # Set working directory
@@ -59,8 +70,14 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progre
 # Copy the rest of the application code
 COPY . /var/www
 
+# Copy built frontend assets from Stage 1
+COPY --from=frontend /app/public/build /var/www/public/build
+
 # Now run the post-install scripts (package:discover, filament:upgrade)
 RUN composer run-script post-autoload-dump --no-interaction 2>/dev/null || true
+
+# Publish Filament assets (admin panel CSS/JS)
+RUN php artisan filament:assets --no-interaction 2>/dev/null || true
 
 # Remove the dummy .env (real one is generated at runtime from env vars)
 RUN rm -f .env
