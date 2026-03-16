@@ -18,8 +18,8 @@ class AuthApiTest extends TestCase
         $response = $this->postJson('/api/auth/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
         ]);
 
         $response->assertStatus(201)
@@ -49,8 +49,8 @@ class AuthApiTest extends TestCase
         $response = $this->postJson('/api/auth/register', [
             'name' => 'Test User',
             'email' => 'invalid-email',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
         ]);
 
         $response->assertStatus(422)
@@ -73,8 +73,8 @@ class AuthApiTest extends TestCase
         $response = $this->postJson('/api/auth/register', [
             'name' => 'Test User',
             'email' => 'existing@example.com',
-            'password' => 'password123',
-            'password_confirmation' => 'password123',
+            'password' => 'Password123',
+            'password_confirmation' => 'Password123',
         ]);
 
         $response->assertStatus(422)
@@ -89,12 +89,12 @@ class AuthApiTest extends TestCase
     public function test_user_can_login_with_valid_credentials(): void
     {
         $user = User::factory()->create([
-            'password' => bcrypt('password123'),
+            'password' => bcrypt('Password123'),
         ]);
 
         $response = $this->postJson('/api/auth/login', [
             'email' => $user->email,
-            'password' => 'password123',
+            'password' => 'Password123',
         ]);
 
         $response->assertStatus(200)
@@ -118,7 +118,7 @@ class AuthApiTest extends TestCase
     public function test_login_fails_with_invalid_credentials(): void
     {
         $user = User::factory()->create([
-            'password' => bcrypt('password123'),
+            'password' => bcrypt('Password123'),
         ]);
 
         $response = $this->postJson('/api/auth/login', [

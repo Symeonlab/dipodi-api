@@ -14,12 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Global middleware — ForceHttps for production
-        $middleware->prepend([
-            \App\Http\Middleware\ForceHttps::class,
-        ]);
-
         // Trust all proxies (Docker / Sliplane / load balancer)
+        // This makes $request->secure() return true when X-Forwarded-Proto: https
+        // No need for ForceHttps middleware — Sliplane terminates TLS at load balancer
         $middleware->trustProxies(at: '*');
 
         // API middleware group — locale + app key verification
